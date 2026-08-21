@@ -94,13 +94,11 @@ def main():
         )
     )
     if result.skipped:
-        # Worth shouting about. The corpus tier is the part that found the truncation
-        # defect, and a green run that silently skipped it proves much less.
         print(
-            "NOTE: %d tests skipped — the SDN.CSV fixture is absent, so the corpus tier "
-            "did not run." % len(result.skipped)
+            "FAIL: %d tests skipped — release verification requires every committed "
+            "authority fixture and the complete corpus tier." % len(result.skipped)
         )
-    sys.exit(0 if result.wasSuccessful() else 1)
+    sys.exit(0 if result.wasSuccessful() and not result.skipped else 1)
 
 
 if __name__ == "__main__":

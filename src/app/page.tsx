@@ -25,6 +25,7 @@ export default function HomePage() {
   const [featured, setFeatured] = useState<Determination | undefined>();
   const [rows, setRows] = useState<DeterminationSummary[]>([]);
   const [damaged, setDamaged] = useState<number | undefined>();
+  const [readError, setReadError] = useState<string | undefined>();
 
   useEffect(() => {
     let live = true;
@@ -44,8 +45,10 @@ export default function HomePage() {
         if (!live) return;
         setFeatured(record);
         setDamaged(count);
-      } catch {
-        // The front page degrades to prose. It is not worth an error panel.
+      } catch (error) {
+        if (live) {
+          setReadError(error instanceof Error ? error.message : "The live contract could not be read.");
+        }
       }
     })();
     return () => {
@@ -78,6 +81,17 @@ export default function HomePage() {
           </Link>
         </div>
       </section>
+
+      {readError ? (
+        <div className="rc-plate rc-plate-unstamped">
+          <span className="rc-plate-title">Live register unavailable</span>
+          <div className="rc-flow-tight">
+            <span className="rc-void-stamp">Nothing was read</span>
+            <p className="m-0 text-13">{readError}</p>
+            <p className="m-0 text-13">No fixture determination has been substituted.</p>
+          </div>
+        </div>
+      ) : null}
 
       {featured && span && featured.matched_entry ? (
         <section className="rc-flow-tight">

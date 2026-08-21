@@ -52,9 +52,9 @@ python -m pip install -r requirements-dev.txt
 npm run verify
 ```
 
-This single command runs textual prefilter parity, the behavioral corpus suite against the copy extracted from the contract, fail-closed frontend regressions, deployment-record drift verification, TypeScript, ESLint, and the production build.
+This single command verifies the committed fixture bytes, textual prefilter parity, the behavioral corpus suite against the copy extracted from the contract, fail-closed frontend regressions, deployment-record drift, TypeScript, ESLint, and the production build.
 
-The repository contains the tested scanner, suite, and pinned authority fixtures under `tests/prefilter/`. The current verification pass ran all 52 tests against the copy extracted from `contracts/Recourse.py`: 0 failures, 0 errors, 0 skipped. Fixture sizes and SHA-256 hashes are recorded in `tests/prefilter/fixtures/README.md`; they are test inputs only and are never imported by the runtime contract.
+The repository contains the tested scanner, suite, and pinned authority fixtures under `tests/prefilter/`. The current verification pass ran all 52 tests against the copy extracted from `contracts/Recourse.py`: 0 failures, 0 errors, 0 skipped. `manifest.json` pins binary sizes and SHA-256 values, while `.gitattributes` prevents Git from converting the authority captures' line endings. GitHub Actions re-runs the full release suite on Linux and independently verifies the fixture bytes on Windows.
 
 ### Live StudioNet
 
@@ -73,8 +73,8 @@ npm run build              PASS (Next.js 16 production build; 7 routes generated
 python -m py_compile       PASS for contracts/Recourse.py
 genvm-lint check           PASS: 16 methods (8 view, 8 write), 0 constructor args
 embedded prefilter suite   PASS: 52 run, 0 failures, 0 errors, 0 skipped
-direct contract tests      PASS: 4 tests
-frontend fail-closed tests PASS: 3 tests
+direct contract tests      PASS: 19 tests
+frontend fail-closed tests PASS: 12 tests
 StudioNet schema            PASS: 16 required methods present; prefilter fingerprint and stats read successfully
 ```
 
@@ -102,7 +102,7 @@ All writes show wallet, transaction, consensus, expected-rejection, external-sou
 
 ## Honest limits
 
-Recourse covers the public exports named in the contract; it is not a universal sanctions or KYC service and is not legal advice. OFAC truncates some long `Remarks` fields, so an address cut at the source is explicitly `INCONCLUSIVE`. Public files can change, disappear, or be republished; `rescreen()` and `refresh_source_health()` make that visible rather than hiding it. StudioNet GEN is simulated network value. The repository includes `scripts/exercise-studionet.mjs` for a funded report/screen walk, but no successful live report or screen transaction is claimed yet. Direct tests cover UNKNOWN, minimum report bond, pending report storage, and LISTED appeal rejection; the full ASSERTED appeal settlement branch remains unproven.
+Recourse covers the public exports named in the contract; it is not a universal sanctions or KYC service and is not legal advice. `NOT_LISTED` means only that a subject was not found in the successfully readable scope of the specific exports checked by that determination. OFAC truncates some long `Remarks` fields, so an address cut at the source is explicitly `INCONCLUSIVE`. Public files can change, disappear, or be republished; `rescreen()` and `refresh_source_health()` make that visible rather than hiding it. StudioNet GEN is simulated network value. The repository includes a rate-limited `scripts/exercise-studionet.mjs` report/screen walk, but no successful live report or screen transaction is claimed yet. Direct tests cover report validation, duplicate/open state, status mapping, appeal creation and rejection, expiry latching, pagination, rescreen safety, and source-health/stat defaults; consensus-dependent semantic adjudication remains pending live proof.
 
 ## Submission notes
 

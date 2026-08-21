@@ -91,7 +91,7 @@ export function AppShell({ children }: { children: ReactNode }) {
       </header>
 
       <main className="rc-sheet py-8" id="main">
-        {DATA_MODE === "fixture" ? <FixtureNotice /> : null}
+        {DATA_MODE === "fixture" ? <FixtureNotice /> : <LiveNotice />}
         {children}
       </main>
 
@@ -149,6 +149,19 @@ function FixtureNotice() {
         them are real bytes from real published files, but the determinations themselves were not
         written by a contract and no bond was ever posted. Set{" "}
         <span className="rc-verbatim">NEXT_PUBLIC_RECOURSE_CONTRACT</span> to read a deployment.
+      </p>
+    </div>
+  );
+}
+
+function LiveNotice() {
+  return (
+    <div className="rc-plate rc-plate-stamp mb-8">
+      <span className="rc-plate-title">Live contract</span>
+      <p className="m-0 text-13">
+        <span className="rc-void-stamp mr-3">LIVE CONTRACT</span>
+        Reads and writes use the configured GenLayer deployment. A failed live read is shown as
+        unavailable; this page never substitutes fixture data while the contract is configured.
       </p>
     </div>
   );

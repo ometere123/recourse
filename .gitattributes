@@ -1,0 +1,15 @@
+# Authority captures are immutable binary evidence. Never rewrite their line endings.
+tests/prefilter/fixtures/SDN.CSV -text
+tests/prefilter/fixtures/ALT.CSV -text
+tests/prefilter/fixtures/consolidated.xml -text
+
+# Keep source and workflow files predictably LF across platforms.
+*.py text eol=lf
+*.ts text eol=lf
+*.tsx text eol=lf
+*.js text eol=lf
+*.mjs text eol=lf
+*.json text eol=lf
+*.md text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf

@@ -8,6 +8,7 @@ import type {
   Determination,
   DeterminationSummary,
 } from "../contract-types";
+import { requireFinalizedSuccess } from "../transaction-status";
 
 type Client = GenLayerClient<typeof import("./config").chain>;
 
@@ -58,11 +59,17 @@ export async function listDeterminations(): Promise<DeterminationSummary[]> {
   if (!CONTRACT_ADDRESS) return [];
   const address = CONTRACT_ADDRESS;
   const client = createReadClient();
-  return client.readContract({
-    address,
-    functionName: "list_determinations",
-    args: [0, 50],
-  }) as Promise<DeterminationSummary[]>;
+  const all: DeterminationSummary[] = [];
+  for (let offset = 0; ; offset += 50) {
+    const page = await client.readContract({
+      address,
+      functionName: "list_determinations",
+      args: [offset, 50],
+    }) as DeterminationSummary[];
+    if (!Array.isArray(page)) throw new Error("Contract returned a malformed determination page.");
+    all.push(...page);
+    if (page.length < 50) return all;
+  }
 }
 
 /**
@@ -71,20 +78,22 @@ export async function listDeterminations(): Promise<DeterminationSummary[]> {
  * The contract counts them while parsing, so the blind spot is measured rather
  * than asserted.
  */
-export async function damagedRecordCount(): Promise<number | undefined> {
-  if (!CONTRACT_ADDRESS) return undefined;
+export async function getSourceHealth(): Promise<unknown> {
+  if (!CONTRACT_ADDRESS) throw new Error("No deployed contract address is configured.");
   const address = CONTRACT_ADDRESS;
   const client = createReadClient();
-  const health = await client.readContract({
+  return client.readContract({
     address,
     functionName: "get_source_health",
     args: [],
-  }) as { unreadable_records?: number | string; observed_at?: string };
-  if (!health.observed_at) return undefined;
-  const value = health?.unreadable_records;
-  if (value === undefined) return undefined;
-  const parsed = typeof value === "number" ? value : Number(value);
-  return Number.isFinite(parsed) ? parsed : undefined;
+  });
+}
+
+export async function getStats(): Promise<unknown> {
+  if (!CONTRACT_ADDRESS) throw new Error("No deployed contract address is configured.");
+  const address = CONTRACT_ADDRESS;
+  const client = createReadClient();
+  return client.readContract({ address, functionName: "stats", args: [] });
 }
 
 /* ------------------------------------------------------------------------- *
@@ -121,14 +130,7 @@ export async function waitAccepted(client: Client, hash: TransactionHash) {
     retries: 90,
   });
   const finalized = await client.getTransaction({ hash });
-  const result = finalized?.consensus_data?.leader_receipt?.[0]?.execution_result;
-  if (result !== "SUCCESS") {
-    const error = finalized?.consensus_data?.leader_receipt?.[0]?.error;
-    throw new Error(
-      `GenLayer contract execution did not succeed (${result ?? "MISSING"})` +
-        `${error ? `: ${error}` : ""}. Transaction: ${hash}`,
-    );
-  }
+  requireFinalizedSuccess(finalized, hash);
   return receipt;
 }
 

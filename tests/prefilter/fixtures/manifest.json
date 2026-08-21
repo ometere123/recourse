@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "captures": [
+    {
+      "file": "SDN.CSV",
+      "sourceUrl": "https://sanctionslistservice.ofac.treas.gov/api/download/sdn.csv",
+      "captureDate": null,
+      "bytes": 5647099,
+      "sha256": "369c3ad9ceefed9ca82f4c45484b731c93687282c36ea3f512543d2c61b85c6b",
+      "expectedRecords": 19249,
+      "purpose": "Canonical OFAC SDN authority capture for deterministic screening tests"
+    },
+    {
+      "file": "ALT.CSV",
+      "sourceUrl": "https://sanctionslistservice.ofac.treas.gov/api/download/alt.csv",
+      "captureDate": null,
+      "bytes": 1063617,
+      "sha256": "c00af65765e4435ef759f9992291093e47ef5a938a145ed381c6dbf2b2f422bc",
+      "expectedRecords": 20194,
+      "purpose": "Canonical OFAC alternate-name capture for bounded identity tests"
+    },
+    {
+      "file": "consolidated.xml",
+      "sourceUrl": "https://scsanctions.un.org/resources/xml/en/consolidated.xml",
+      "captureDate": null,
+      "bytes": 2176185,
+      "sha256": "0f0ac1ea30415bcd472aa92a4574eb3011c3c423ca6dfc5802ca4d5f25ebbced",
+      "expectedRecords": 1011,
+      "purpose": "Canonical UN consolidated-list capture for cross-authority tests"
+    }
+  ]
+}

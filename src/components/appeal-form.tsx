@@ -48,6 +48,7 @@ export function AppealForm({ id }: { id: string }) {
   const [determination, setDetermination] = useState<Determination | undefined>();
   const [existing, setExisting] = useState<Appeal | undefined>();
   const [loading, setLoading] = useState(true);
+  const [readError, setReadError] = useState<string | undefined>();
   const [grounds, setGrounds] = useState<AppealGrounds | undefined>();
   const [evidence, setEvidence] = useState("");
   const [bond, setBond] = useState("");
@@ -60,11 +61,14 @@ export function AppealForm({ id }: { id: string }) {
 
   const load = useCallback(async () => {
     setLoading(true);
+    setReadError(undefined);
     try {
       const record = await fetchDetermination(id);
       setDetermination(record);
       if (record?.appeal_id) setExisting(await fetchAppeal(record.appeal_id));
       if (record && !bond) setBond(formatGen(record.bond).replace(/,/g, ""));
+    } catch (error) {
+      setReadError(error instanceof Error ? error.message : "The live contract could not be read.");
     } finally {
       setLoading(false);
     }
@@ -134,6 +138,22 @@ export function AppealForm({ id }: { id: string }) {
         <span className="rc-pending-bar mr-3" />
         Reading determination {id}
       </p>
+    );
+  }
+
+  if (readError) {
+    return (
+      <div className="rc-plate rc-plate-unstamped">
+        <span className="rc-plate-title">Appeal record unavailable</span>
+        <div className="rc-flow-tight">
+          <span className="rc-void-stamp">Nothing was read</span>
+          <p className="m-0 text-13">{readError}</p>
+          <p className="m-0 text-13">
+            This is not a missing determination. The live read failed, and no fixture record was substituted.
+          </p>
+          <button className="rc-btn" onClick={() => void load()} type="button">Try again</button>
+        </div>
+      </div>
     );
   }
 

@@ -21,6 +21,7 @@ import {
   saveTransactions,
   STALE_AFTER_MS,
 } from "@/lib/storage";
+import { inspectTransaction } from "@/lib/transaction-status";
 
 /** Nothing further will happen to a transaction in one of these states. */
 const COMPLETE: ReadonlySet<string> = new Set([
@@ -113,14 +114,11 @@ export function TransactionProvider({ children }: { children: ReactNode }) {
           if (cancelled) return;
           try {
             const tx = await client.getTransaction({ hash: hash as TransactionHash });
-            const status = (tx as { statusName?: string } | undefined)?.statusName;
-            if (status) {
-              const leader = tx?.consensus_data?.leader_receipt?.[0];
-              update(hash, status as TxStage, {
-                result: leader?.execution_result,
-                error: leader?.error ?? undefined,
-              });
-            }
+            const inspected = inspectTransaction(tx);
+            update(hash, inspected.stage, {
+              result: inspected.executionResult,
+              error: inspected.executionError,
+            });
           } catch {
             // A node hiccup is not information about this transaction. Leave the
             // recorded status alone and ask again next tick.
