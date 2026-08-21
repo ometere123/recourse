@@ -154,10 +154,12 @@
   },
   "ci": {
     "provider": "GitHub Actions",
-    "runId": "32492017163",
-    "commit": "cf716468e282b2d10f9d001970aa537a46782215",
+    "runId": "32508769044",
+    "commit": "66d943d229c394bd227862976887ec5d39d057e6",
     "os": ["ubuntu-latest", "windows-latest"],
-    "conclusion": "success"
+    "conclusion": "success",
+    "npmCiAudit": "found 0 vulnerabilities",
+    "note": "CI runs on every push, so commits after the one named here have their own runs. This run is recorded because its npm ci steps are the first to report 0 vulnerabilities in place of the 3 high-severity findings, on both operating systems."
   },
   "notProvenOnChain": [
     "The ADDRESS path. The only live attempt failed for the CLI-coercion reason recorded under strandedValue, so no live ADDRESS determination exists and none is claimed. The path is covered by direct tests against the production screen() code.",

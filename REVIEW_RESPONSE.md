@@ -62,7 +62,7 @@ Determination `d1` — subject `AMNOKGANG TECHNOLOGY DEVELOPMENT COMPANY`, kind 
 | Source binding | SHA-256 `d21cbe18a55c51385c0b68c56d0b4127c8ba0fbbf7618ec07bba47e9a15f60a1` |
 | Deployed-source parity | PASS: `genlayer code` retrieval on 2026-08-21; 101,872 bytes both sides; SHA-256 equal |
 | Fixture binary integrity | PASS locally: SDN 5,647,099 B / `369c3a…c6b`; ALT 1,063,617 B / `c00af6…2bc`; UN 2,176,185 B / `0f0ac1…ced` |
-| Cross-platform fixture CI | PASS: GitHub Actions run `32492017163` on commit `cf716468e282b2d10f9d001970aa537a46782215`, `ubuntu-latest` + `windows-latest`, conclusion `success` |
+| Cross-platform fixture CI | PASS: GitHub Actions run `32508769044` on commit `66d943d229c394bd227862976887ec5d39d057e6`, `ubuntu-latest` + `windows-latest`, conclusion `success`; both `npm ci` steps report `found 0 vulnerabilities`. CI runs on every push, so later commits have their own runs. |
 | Schema | PASS, 16 required methods via GenLayer CLI |
 | Prefilter textual parity | PASS, 582 lines / 11 functions / 23,679 bytes |
 | Embedded behavioral corpus | PASS, 52 run / 0 failures / 0 errors / 0 skipped |
@@ -93,7 +93,7 @@ Both CI installs reported 3 high-severity findings. They were real and they were
 
 All three were transitive through one direct dependency, `next 16.2.12`, and npm's own recommended remedy was `next@16.3.2`. That upgrade was applied deliberately — `npm install next@16.3.2 --save-exact`, reviewed — and not through `npm audit fix --force`, which is documented to install outside the stated dependency range and would have been an unreviewed framework change in a submission build.
 
-After the bump, `postcss` resolves to `8.5.23` and `sharp` to `0.35.3`, both outside their advisory ranges, and both `npm audit` and `npm audit --omit=dev` report **0 vulnerabilities**. This app does not import `next/image`, so the `sharp` path was never reachable at runtime, but it is on a fixed version regardless rather than argued away. `npm run verify` passes end to end on the new lockfile.
+After the bump, `postcss` resolves to `8.5.23` and `sharp` to `0.35.3`, both outside their advisory ranges, and both `npm audit` and `npm audit --omit=dev` report **0 vulnerabilities**. CI confirms it independently: the `npm ci` steps of run `32508769044` print `found 0 vulnerabilities` on both Linux and Windows, where the earlier runs printed 3 high. This app does not import `next/image`, so the `sharp` path was never reachable at runtime, but it is on a fixed version regardless rather than argued away. `npm run verify` passes end to end on the new lockfile.
 
 ## Known limitations
 
