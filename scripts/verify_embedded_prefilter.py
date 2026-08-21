@@ -22,7 +22,7 @@ import unittest
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
 CONTRACT = os.path.join(ROOT, "contracts", "Recourse.py")
-TESTDIR = os.path.join(os.path.dirname(ROOT), "_build", "recourse-prefilter")
+TESTDIR = os.path.join(ROOT, "tests", "prefilter")
 
 BEGIN = "# BEGIN embedded deterministic pre-filter"
 END = "# END embedded deterministic pre-filter"

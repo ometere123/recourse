@@ -24,7 +24,6 @@ import {
 
 /** Nothing further will happen to a transaction in one of these states. */
 const COMPLETE: ReadonlySet<string> = new Set([
-  "ACCEPTED",
   "FINALIZED",
   "CANCELED",
   "UNDETERMINED",
@@ -37,7 +36,11 @@ const POLL_MS = 15000;
 type TransactionValue = {
   transactions: StoredTransaction[];
   track: (transaction: StoredTransaction) => void;
-  update: (hash: string, status: TxStage) => void;
+  update: (
+    hash: string,
+    status: TxStage,
+    execution?: { result?: string; error?: string },
+  ) => void;
   clear: () => void;
   /** Live rounds only. Drives the "n in consensus" count in the masthead. */
   active: StoredTransaction[];
@@ -58,9 +61,22 @@ export function TransactionProvider({ children }: { children: ReactNode }) {
     setTransactions(addTransaction(transaction));
   }, []);
 
-  const update = useCallback((hash: string, status: TxStage) => {
+  const update = useCallback((
+    hash: string,
+    status: TxStage,
+    execution?: { result?: string; error?: string },
+  ) => {
     setTransactions((current) => {
-      const next = current.map((tx) => (tx.hash === hash ? { ...tx, status } : tx));
+      const next = current.map((tx) =>
+        tx.hash === hash
+          ? {
+              ...tx,
+              status,
+              executionResult: execution?.result ?? tx.executionResult,
+              executionError: execution?.error ?? tx.executionError,
+            }
+          : tx,
+      );
       saveTransactions(next);
       return next;
     });
@@ -98,7 +114,13 @@ export function TransactionProvider({ children }: { children: ReactNode }) {
           try {
             const tx = await client.getTransaction({ hash: hash as TransactionHash });
             const status = (tx as { statusName?: string } | undefined)?.statusName;
-            if (status) update(hash, status as TxStage);
+            if (status) {
+              const leader = tx?.consensus_data?.leader_receipt?.[0];
+              update(hash, status as TxStage, {
+                result: leader?.execution_result,
+                error: leader?.error ?? undefined,
+              });
+            }
           } catch {
             // A node hiccup is not information about this transaction. Leave the
             // recorded status alone and ask again next tick.

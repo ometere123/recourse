@@ -1,5 +1,6 @@
 {
   "name": "recourse",
+  "type": "module",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -9,9 +10,13 @@
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
     "verify:prefilter": "node scripts/verify-prefilter.mjs",
+    "verify:embedded": "node scripts/run-python.mjs scripts/verify_embedded_prefilter.py",
+    "verify:frontend": "node --experimental-strip-types --test tests/frontend/*.test.ts",
+    "verify:contract": "node scripts/run-python.mjs -m pytest tests/direct -q",
+    "verify:deployment": "node scripts/verify-deployment-source.mjs",
     "verify:schema": "node scripts/verify-schema.mjs",
     "verify:studionet": "node scripts/exercise-studionet.mjs",
-    "verify": "npm run verify:prefilter && npm run typecheck && npm run lint"
+    "verify": "npm run verify:prefilter && npm run verify:embedded && npm run verify:frontend && npm run verify:contract && npm run verify:deployment && npm run typecheck && npm run lint && npm run build"
   },
   "dependencies": {
     "genlayer-js": "1.1.8",

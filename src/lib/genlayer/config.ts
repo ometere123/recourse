@@ -59,13 +59,13 @@ export const PRIMARY_SOURCES = [
   {
     file: "SDN.CSV",
     list: "OFAC_SDN" as const,
-    url: "https://sanctionslistservice.ofac.treas.gov/api/PublicationPreview/exports/SDN.CSV",
+    url: "https://sanctionslistservice.ofac.treas.gov/api/download/sdn.csv",
     authority: "US Department of the Treasury, Office of Foreign Assets Control",
   },
   {
     file: "ALT.CSV",
     list: "OFAC_ALT" as const,
-    url: "https://sanctionslistservice.ofac.treas.gov/api/PublicationPreview/exports/ALT.CSV",
+    url: "https://sanctionslistservice.ofac.treas.gov/api/download/alt.csv",
     authority: "US Department of the Treasury, Office of Foreign Assets Control",
   },
   {

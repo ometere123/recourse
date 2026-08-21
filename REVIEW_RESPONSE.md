@@ -27,7 +27,27 @@ The contract fetches OFAC `SDN.CSV`, OFAC `ALT.CSV`, and the UN consolidated exp
 
 ## Current release evidence
 
-The release contract is deployed at `0xA73d81f1f7Cf772AC5976317eE12D259a67D48F7` by transaction `0xe10234c3fe7c27bafb971c06cdf450af3397c9c8cf91a9bf9fd4ba26ad550173`. The deployed schema exposes all 16 required methods, and `prefilter_fingerprint()` plus `stats()` read successfully. The application includes the root, check, report, register, determination, appeal and docs routes, wallet and transaction lifecycle, contract adapter, schema verifier, and a reproducible `scripts/exercise-studionet.mjs` funded report/screen walk. The standalone write walk remains unverified here because this workspace rejected outbound network escalation before the script submitted a transaction.
+The release contract is deployed at `0xA73d81f1f7Cf772AC5976317eE12D259a67D48F7` by transaction `0xe10234c3fe7c27bafb971c06cdf450af3397c9c8cf91a9bf9fd4ba26ad550173`. The deployed schema exposes all 16 required methods, and `prefilter_fingerprint()` plus `stats()` read successfully. The application includes the root, check, report, determinations, determination detail, appeal and docs routes, wallet and transaction lifecycle, contract adapter, schema verifier, and a reproducible `scripts/exercise-studionet.mjs` funded report/screen walk. The standalone write walk remains unverified here because this workspace rejected outbound network escalation before the script submitted a transaction.
+
+| Release check | Evidence |
+| --- | --- |
+| Contract deployed | `0xA73d81f1f7Cf772AC5976317eE12D259a67D48F7` |
+| Deployment transaction | `0xe10234c3fe7c27bafb971c06cdf450af3397c9c8cf91a9bf9fd4ba26ad550173` |
+| Source binding | SHA-256 `d21cbe18a55c51385c0b68c56d0b4127c8ba0fbbf7618ec07bba47e9a15f60a1`; Explorer source parity not independently available |
+| Schema | PASS, 16 required methods via GenLayer CLI |
+| Prefilter textual parity | PASS, 582 lines / 11 functions / 23,679 bytes |
+| Embedded behavioral corpus | PASS, 52 run / 0 failures / 0 errors / 0 skipped |
+| Direct contract tests | PASS, 4 tests |
+| Frontend fail-closed regressions | PASS, 3 tests |
+| GenVM lint | PASS, 16 methods / 8 views / 8 writes / 0 constructor args |
+| TypeScript | PASS |
+| ESLint | PASS |
+| Production build | PASS, 7 product routes plus not-found |
+| Successful bonded report | NOT RUN; no transaction hash claimed |
+| Successful screen | NOT RUN; no transaction hash claimed |
+| Stored determination/check/source health proof | NOT RUN; proof harness is ready but has no captured live output |
+| Appeal branch | Partial direct proof: exact `LISTED` rejection only; full ASSERTED settlement lifecycle remains unproven |
+| Live app | No public URL recorded in this repository |
 
 ## Known limitations
 

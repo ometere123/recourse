@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { checkSubject, type CheckOutcome } from "@/lib/data-source";
-import { CLEAR_SCOPE, DAMAGED_RECORD_COUNT } from "@/lib/contract-types";
+import { CLEAR_SCOPE } from "@/lib/contract-types";
 import { displayTime, isAddress } from "@/lib/format";
 import { markedSpanFor } from "@/lib/match-span";
 import { VerdictStamp } from "@/components/stamp";
@@ -174,12 +174,14 @@ function Outcome({ outcome }: { outcome: CheckOutcome }) {
 /** The four answers, each in fixed words. */
 function VerdictCopy({ outcome }: { outcome: Extract<CheckOutcome, { kind: "record" }> }) {
   const { result, determination } = outcome;
-  const damaged = result.damaged_records || DAMAGED_RECORD_COUNT;
+  const damaged = result.damaged_records;
 
   const blindSpot = (
     <p className="text-13 m-0 border-t border-rule pt-4">
       <span className="rc-label">Stated blind spot</span> OFAC truncates its Remarks column at
-      1,000 characters. <span className="rc-tabular font-semibold">{damaged} records</span> in the
+      1,000 characters. <span className="rc-tabular font-semibold">
+        {damaged === undefined ? "source health unavailable" : `${damaged} records`}
+      </span>{" "}in the
       current file have a digital-currency address severed by that limit, so those addresses cannot
       be matched in full by anyone, including this contract. A subject matching only the surviving
       part of one is returned INCONCLUSIVE, never CLEAR.
@@ -242,6 +244,17 @@ function VerdictCopy({ outcome }: { outcome: Extract<CheckOutcome, { kind: "reco
           </p>
           <p className="text-13 m-0">
             Apply your own risk tolerance. That decision was never the contract&rsquo;s to make.
+          </p>
+        </div>
+      );
+
+    case "UNKNOWN":
+      return (
+        <div className="rc-flow-tight border-l-2 border-process pl-4">
+          <p className="m-0 font-semibold">A determination exists, but screening has not produced an answer.</p>
+          <p className="text-13 m-0">
+            This is not CLEAR and it is not NOT_LISTED. Open the determination to inspect or run
+            the pending permissionless screen.
           </p>
         </div>
       );

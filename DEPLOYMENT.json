@@ -1,0 +1,10 @@
+{
+  "network": "studionet",
+  "contract": "0xA73d81f1f7Cf772AC5976317eE12D259a67D48F7",
+  "deploymentTransaction": "0xe10234c3fe7c27bafb971c06cdf450af3397c9c8cf91a9bf9fd4ba26ad550173",
+  "gitCommit": "ff3fc191b40f43e6d4e2639c2210446eab90c1c8",
+  "contractFile": "contracts/Recourse.py",
+  "contractSha256": "d21cbe18a55c51385c0b68c56d0b4127c8ba0fbbf7618ec07bba47e9a15f60a1",
+  "deployedSourceVerified": false,
+  "bindingNote": "This is the exact local source SHA recorded at deployment. Independent explorer source retrieval is not currently available; verify-deployment-source checks repository drift, not explorer parity."
+}

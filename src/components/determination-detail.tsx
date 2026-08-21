@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { fetchAppeal, fetchDamagedRecordCount, fetchDetermination } from "@/lib/data-source";
-import { DAMAGED_RECORD_COUNT, type Appeal, type Determination } from "@/lib/contract-types";
+import { type Appeal, type Determination } from "@/lib/contract-types";
 import { DeterminationView } from "./determination-view";
 import { WriteActions } from "./write-actions";
 
@@ -16,7 +16,7 @@ import { WriteActions } from "./write-actions";
 export function DeterminationDetail({ id }: { id: string }) {
   const [determination, setDetermination] = useState<Determination | undefined>();
   const [appeal, setAppeal] = useState<Appeal | undefined>();
-  const [damaged, setDamaged] = useState(DAMAGED_RECORD_COUNT);
+  const [damaged, setDamaged] = useState<number | undefined>();
   const [state, setState] = useState<"loading" | "ready" | "missing" | "error">("loading");
   const [error, setError] = useState<string | undefined>();
 

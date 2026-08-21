@@ -59,7 +59,7 @@ export type AppealGrounds =
 export type AppealStatus = "OPEN" | "UPHELD" | "OVERTURNED" | "UNCLEAR";
 
 /** `check(subject)` — the integration surface other contracts call. */
-export type CheckVerdict = "CLEAR" | "FLAGGED" | "INCONCLUSIVE" | "CONTESTED";
+export type CheckVerdict = "UNKNOWN" | "CLEAR" | "FLAGGED" | "INCONCLUSIVE" | "CONTESTED";
 
 /**
  * How many records in the current SDN.CSV have a digital-currency address cut
@@ -112,7 +112,8 @@ export type Appeal = {
   determination_id: string;
   appellant: string;
   evidence_url: string;
-  grounds: AppealGrounds;
+  /** The stored, bounded ground text submitted to the contract. */
+  grounds: string;
   bond: U256String;
   status: AppealStatus;
   verdict_rationale: string;
@@ -134,7 +135,7 @@ export type CheckResult = {
   inconclusive_reason: InconclusiveReason | "";
   surviving_prefix_len: number;
   /** Source-health unreadable-record count folded in, so the blind spot travels with it. */
-  damaged_records: number;
+  damaged_records?: number;
   screened_at: string;
 };
 
@@ -265,6 +266,8 @@ export type StoredTransaction = {
   functionName: string;
   createdAt: string;
   status: TxStage;
+  executionResult?: string;
+  executionError?: string;
   /** Which determination or appeal this write concerns, for deep-linking the rail. */
   subjectId?: string;
 };

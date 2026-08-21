@@ -23,7 +23,7 @@ import { fileURLToPath } from "node:url";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const CONTRACT = resolve(here, "..", "contracts", "Recourse.py");
-const ORIGINAL = resolve(here, "..", "..", "_build", "recourse-prefilter", "prefilter.py");
+const ORIGINAL = resolve(here, "..", "tests", "prefilter", "prefilter.py");
 
 const BEGIN = "# BEGIN embedded deterministic pre-filter";
 const END = "# END embedded deterministic pre-filter";
@@ -102,7 +102,7 @@ for (let i = 0; i < limit; i += 1) {
     console.error(`    embedded copy   : ${JSON.stringify(embedded[i])}`);
     fail(
       "contracts/Recourse.py no longer contains the tested pre-filter.\n" +
-        "        Edit _build/recourse-prefilter/prefilter.py, re-run its tests, then re-splice.\n" +
+      "        Edit tests/prefilter/prefilter.py, re-run its tests, then re-splice.\n" +
         "        Never edit the embedded copy directly."
     );
   }

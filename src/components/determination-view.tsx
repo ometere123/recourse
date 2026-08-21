@@ -26,7 +26,7 @@ export function DeterminationView({
 }: {
   determination: Determination;
   appeal?: Appeal;
-  damagedRecords: number;
+  damagedRecords?: number;
   actions?: React.ReactNode;
 }) {
   const span = markedSpanFor(d);
@@ -128,13 +128,15 @@ function Disposition({
   damagedRecords,
 }: {
   determination: Determination;
-  damagedRecords: number;
+  damagedRecords?: number;
 }) {
   const blindSpot = (
     <p className="text-13 m-0">
       <span className="rc-label">Stated blind spot</span> OFAC truncates its Remarks column at
       1,000 characters, and{" "}
-      <span className="rc-tabular font-semibold">{damagedRecords} records</span> in the current file
+      <span className="rc-tabular font-semibold">
+        {damagedRecords === undefined ? "source health unavailable" : `${damagedRecords} records`}
+      </span>{" "}in the current file
       have a digital-currency address cut mid-value as a result. A subject matching only the
       surviving part of one of those values is recorded INCONCLUSIVE, never clear.
     </p>
@@ -319,7 +321,7 @@ function AppealRecord({ appeal }: { appeal: Appeal }) {
           <dl className="rc-flow-tight m-0">
             <Field term="Grounds">
               <span className="rc-verbatim">{appeal.grounds}</span>
-              <span className="text-13"> — {GROUNDS_GLOSS[appeal.grounds]}</span>
+              <span className="text-13"> — {GROUNDS_GLOSS[appeal.grounds] ?? "the stated appeal basis"}</span>
             </Field>
             <Field term="Appellant">
               <span className="rc-verbatim">{shortenAddress(appeal.appellant, 12, 10)}</span>
@@ -369,7 +371,7 @@ function AppealRecord({ appeal }: { appeal: Appeal }) {
   );
 }
 
-export const GROUNDS_GLOSS: Record<Appeal["grounds"], string> = {
+export const GROUNDS_GLOSS: Record<string, string> = {
   DIFFERENT_PARTY: "the matched row describes somebody else",
   INVALID_ASSOCIATION: "the link between the subject and the listed party does not hold",
   DELISTED: "the party was removed from the list before this screening",

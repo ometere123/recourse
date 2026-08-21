@@ -44,6 +44,7 @@ const APPEAL_TONE: Record<AppealStatus, Tone> = {
 };
 
 const VERDICT_TONE: Record<CheckVerdict, Tone> = {
+  UNKNOWN: "contested",
   FLAGGED: "stamp",
   CLEAR: "ink",
   INCONCLUSIVE: "inconclusive",

@@ -77,6 +77,16 @@ export function TransactionRail() {
                       call can be submitted again.
                     </p>
                   ) : null}
+                  {tx.status === "FINALIZED" && tx.executionResult !== "SUCCESS" ? (
+                    <p className="m-0 text-12 text-stamp">
+                      Finalized rollback: GenVM {tx.executionResult ?? "result unavailable"}
+                      {tx.executionError ? ` — ${tx.executionError}` : ""}. No successful state
+                      transition is claimed.
+                    </p>
+                  ) : null}
+                  {tx.status === "FINALIZED" && tx.executionResult === "SUCCESS" ? (
+                    <p className="m-0 text-12">Finalized · GenVM SUCCESS</p>
+                  ) : null}
                 </div>
                 <div className="min-w-[9rem]">
                   <Ruler stage={tx.status} />

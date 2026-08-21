@@ -1,7 +1,6 @@
 import {
   DAMAGED_RECORD_COUNT,
   type Appeal,
-  type AppealGrounds,
   type AppealStatus,
   type BasisKind,
   type CheckResult,
@@ -18,6 +17,7 @@ import { CONTRACT_ADDRESS } from "./genlayer/config";
 import * as contract from "./genlayer/contract";
 import { MOCK_APPEALS, MOCK_DETERMINATIONS } from "./mock-data";
 import { isAddress } from "./format";
+import { optionalFiniteNumber, requireEnum } from "./live-coercion";
 
 /**
  * THE GATE.
@@ -61,7 +61,7 @@ const num = (raw: Raw, key: string): number => {
 };
 
 const oneOf = <T extends string>(value: string, allowed: readonly T[], fallback: T): T =>
-  (allowed as readonly string[]).includes(value) ? (value as T) : fallback;
+  value === "" ? fallback : requireEnum("contract field", value, allowed);
 
 const STATUSES = [
   "PENDING",
@@ -82,13 +82,6 @@ const KINDS = ["ADDRESS", "ENTITY"] as const satisfies readonly SubjectKind[];
 
 const BASES = ["PRIMARY_LIST", "ASSERTED"] as const satisfies readonly BasisKind[];
 
-const GROUNDS = [
-  "DIFFERENT_PARTY",
-  "INVALID_ASSOCIATION",
-  "DELISTED",
-  "STALE_SOURCE",
-] as const satisfies readonly AppealGrounds[];
-
 const APPEAL_STATUSES = ["OPEN", "UPHELD", "OVERTURNED", "UNCLEAR"] as const satisfies
   readonly AppealStatus[];
 
@@ -97,7 +90,7 @@ const VERDICTS = ["CLEAR", "FLAGGED", "INCONCLUSIVE", "CONTESTED"] as const sati
 
 function asDetermination(raw: Raw): Determination {
   const reason = str(raw, "inconclusive_reason");
-  const status = oneOf(str(raw, "status"), STATUSES, "PENDING");
+  const status = requireEnum("determination status", str(raw, "status"), STATUSES);
   const contractKind = str(raw, "subject_kind");
   const entry = [
     ["ent_num", str(raw, "entry_ent_num")],
@@ -146,12 +139,12 @@ function asAppeal(raw: Raw): Appeal {
     determination_id: str(raw, "determination_id"),
     appellant: str(raw, "appellant"),
     evidence_url: str(raw, "evidence_url"),
-    grounds: oneOf(str(raw, "grounds"), GROUNDS, "DIFFERENT_PARTY"),
+    grounds: str(raw, "grounds"),
     bond: str(raw, "bond"),
     status:
       rawStatus === "PENDING"
         ? "OPEN"
-        : oneOf(disposition || rawStatus, APPEAL_STATUSES, "OPEN"),
+        : requireEnum("appeal status", disposition || rawStatus, APPEAL_STATUSES),
     verdict_rationale: str(raw, "verdict_rationale") || str(raw, "rationale"),
     evidence_digest: str(raw, "evidence_digest"),
     settled_at: str(raw, "settled_at"),
@@ -189,7 +182,8 @@ export async function fetchDetermination(id: string): Promise<Determination | un
   const raw = (await contract.getDetermination(id)) as unknown;
   if (!raw || typeof raw !== "object") return undefined;
   const parsed = asDetermination(raw as Raw);
-  return parsed.id ? parsed : undefined;
+  if (!parsed.id) throw new Error("Contract returned a determination without an id.");
+  return parsed;
 }
 
 export async function fetchAppeal(id: string): Promise<Appeal | undefined> {
@@ -198,7 +192,8 @@ export async function fetchAppeal(id: string): Promise<Appeal | undefined> {
   const raw = (await contract.getAppeal(id)) as unknown;
   if (!raw || typeof raw !== "object") return undefined;
   const parsed = asAppeal(raw as Raw);
-  return parsed.id ? parsed : undefined;
+  if (!parsed.id) throw new Error("Contract returned an appeal without an id.");
+  return parsed;
 }
 
 /**
@@ -206,10 +201,10 @@ export async function fetchAppeal(id: string): Promise<Appeal | undefined> {
  * the authority's own 1,000-character Remarks limit cut in half. Surfaced on
  * every result as a stated blind spot.
  */
-export async function fetchDamagedRecordCount(): Promise<number> {
+export async function fetchDamagedRecordCount(): Promise<number | undefined> {
   if (IS_FIXTURE) return DAMAGED_RECORD_COUNT;
   const value = await contract.damagedRecordCount();
-  return typeof value === "number" && Number.isFinite(value) ? value : DAMAGED_RECORD_COUNT;
+  return typeof value === "number" && Number.isFinite(value) ? value : undefined;
 }
 
 /* ------------------------------------------------------------------------- *
@@ -247,36 +242,52 @@ export async function checkSubject(input: string): Promise<CheckOutcome> {
       message: error instanceof Error ? error.message : "The contract could not be reached.",
     };
   }
-  if (!raw || typeof raw !== "object") return { kind: "no-record", subject, subject_kind };
+  try {
+    if (!raw || typeof raw !== "object") {
+      throw new Error("Contract returned a malformed check response.");
+    }
 
-  const row = raw as Raw;
-  const verdict = oneOf(str(row, "verdict") || str(row, "result"), VERDICTS, "CLEAR");
-  const determination_id = str(row, "determination_id");
-  if (!determination_id) return { kind: "no-record", subject, subject_kind };
+    const row = raw as Raw;
+    const rawVerdict = str(row, "verdict") || str(row, "result");
+    const verdict = rawVerdict === "UNKNOWN"
+      ? "UNKNOWN"
+      : requireEnum("check verdict", rawVerdict, VERDICTS);
+    const determination_id = str(row, "determination_id");
+    if (verdict === "UNKNOWN" && !determination_id) {
+      return { kind: "no-record", subject, subject_kind };
+    }
+    if (!determination_id) throw new Error("Contract returned a verdict without a determination id.");
 
-  const result: CheckResult = {
-    verdict,
-    determination_id,
-    subject: str(row, "subject") || subject,
-    subject_kind: oneOf(str(row, "subject_kind"), KINDS, subject_kind),
-    status: oneOf(str(row, "status"), STATUSES, "PENDING"),
-    basis: str(row, "basis") || str(row, "note"),
-    matched_list: oneOf(str(row, "matched_list"), LISTS, "NONE"),
-    source_digest: str(row, "source_digest"),
-    source_generated: str(row, "source_generated"),
-    inconclusive_reason: str(row, "inconclusive_reason") as CheckResult["inconclusive_reason"],
-    surviving_prefix_len: num(row, "surviving_prefix_len"),
-    damaged_records: num(row, "damaged_records") || num(row, "unreadable_records") || DAMAGED_RECORD_COUNT,
-    screened_at: str(row, "screened_at"),
-  };
-  const determination = await fetchDetermination(determination_id);
-  return { kind: "record", result, determination };
+    const result: CheckResult = {
+      verdict,
+      determination_id,
+      subject: str(row, "subject") || subject,
+      subject_kind: oneOf(str(row, "subject_kind"), KINDS, subject_kind),
+      status: requireEnum("determination status", str(row, "status"), STATUSES),
+      basis: str(row, "basis") || str(row, "note"),
+      matched_list: oneOf(str(row, "matched_list"), LISTS, "NONE"),
+      source_digest: str(row, "source_digest"),
+      source_generated: str(row, "source_generated"),
+      inconclusive_reason: str(row, "inconclusive_reason") as CheckResult["inconclusive_reason"],
+      surviving_prefix_len: num(row, "surviving_prefix_len"),
+      damaged_records:
+        optionalFiniteNumber(row.damaged_records) ?? optionalFiniteNumber(row.unreadable_records),
+      screened_at: str(row, "screened_at"),
+    };
+    const determination = await fetchDetermination(determination_id);
+    return { kind: "record", result, determination };
+  } catch (error) {
+    return {
+      kind: "unreachable",
+      message: error instanceof Error ? error.message : "The contract returned an unusable response.",
+    };
+  }
 }
 
 /** Project a stored determination into the shape `check()` returns. */
 export function toCheckResult(d: Determination): CheckResult {
   return {
-    verdict: verdictOf(d.status) ?? "CLEAR",
+    verdict: verdictOf(d.status) ?? "UNKNOWN",
     determination_id: d.id,
     subject: d.subject,
     subject_kind: d.subject_kind,

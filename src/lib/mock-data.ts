@@ -304,14 +304,14 @@ export function mockSourceRows(subjectKind: "ADDRESS" | "ENTITY"): SourceRow[] {
   return [
     {
       file: "SDN.CSV",
-      url: "https://sanctionslistservice.ofac.treas.gov/api/PublicationPreview/exports/SDN.CSV",
+      url: "https://sanctionslistservice.ofac.treas.gov/api/download/sdn.csv",
       list: "OFAC_SDN",
       state: "checked",
       detail: `19,249 rows · 5,647,099 bytes · sha256 ${SDN_DIGEST.slice(0, 10)}…`,
     },
     {
       file: "ALT.CSV",
-      url: "https://sanctionslistservice.ofac.treas.gov/api/PublicationPreview/exports/ALT.CSV",
+      url: "https://sanctionslistservice.ofac.treas.gov/api/download/alt.csv",
       list: "OFAC_ALT",
       state: subjectKind === "ENTITY" ? "checked" : "not-applicable",
       detail:

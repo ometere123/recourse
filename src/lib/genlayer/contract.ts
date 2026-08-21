@@ -19,33 +19,28 @@ export async function verifyContractSchema() {
   if (!CONTRACT_ADDRESS) return { ok: false, missing: REQUIRED_METHODS, configured: false };
   const address = CONTRACT_ADDRESS;
   const client = createReadClient();
-  const schema = await readMaybe<{ methods: Record<string, unknown> }>(() =>
-    client.getContractSchema(address),
-  );
-  if (!schema) return { ok: false, missing: REQUIRED_METHODS, configured: true };
+  const schema = await client.getContractSchema(address) as { methods: Record<string, unknown> };
   const missing = REQUIRED_METHODS.filter((method) => !schema.methods[method]);
   return { ok: missing.length === 0, missing, configured: true };
 }
 
 /**
- * `check(subject)` — the tri-state integration surface. Returns undefined only
- * when the contract is unreachable; a subject with no record is a successful
- * read that comes back CLEAR, and that distinction has to survive to the UI.
+ * `check(subject)` — the fail-closed integration surface. A subject with no
+ * record is a successful read that comes back UNKNOWN; transport or execution
+ * failure throws and must remain unavailable at the UI boundary.
  */
-export async function check(subject: string): Promise<CheckResult | undefined> {
-  if (!CONTRACT_ADDRESS) return undefined;
+export async function check(subject: string): Promise<CheckResult> {
+  if (!CONTRACT_ADDRESS) throw new Error("No deployed contract address is configured.");
   const address = CONTRACT_ADDRESS;
   const client = createReadClient();
-  return readMaybe<CheckResult>(() =>
-    client.readContract({ address, functionName: "check", args: [subject] }),
-  );
+  return client.readContract({ address, functionName: "check", args: [subject] }) as Promise<CheckResult>;
 }
 
 export async function getDetermination(id: string): Promise<Determination | undefined> {
   if (!CONTRACT_ADDRESS) return undefined;
   const address = CONTRACT_ADDRESS;
   const client = createReadClient();
-  return readMaybe<Determination>(() =>
+  return readOptional<Determination>(() =>
     client.readContract({ address, functionName: "get_determination", args: [id] }),
   );
 }
@@ -54,7 +49,7 @@ export async function getAppeal(id: string): Promise<Appeal | undefined> {
   if (!CONTRACT_ADDRESS) return undefined;
   const address = CONTRACT_ADDRESS;
   const client = createReadClient();
-  return readMaybe<Appeal>(() =>
+  return readOptional<Appeal>(() =>
     client.readContract({ address, functionName: "get_appeal", args: [id] }),
   );
 }
@@ -63,11 +58,11 @@ export async function listDeterminations(): Promise<DeterminationSummary[]> {
   if (!CONTRACT_ADDRESS) return [];
   const address = CONTRACT_ADDRESS;
   const client = createReadClient();
-  return (
-    (await readMaybe<DeterminationSummary[]>(() =>
-      client.readContract({ address, functionName: "list_determinations", args: [0, 50] }),
-    )) ?? []
-  );
+  return client.readContract({
+    address,
+    functionName: "list_determinations",
+    args: [0, 50],
+  }) as Promise<DeterminationSummary[]>;
 }
 
 /**
@@ -80,9 +75,12 @@ export async function damagedRecordCount(): Promise<number | undefined> {
   if (!CONTRACT_ADDRESS) return undefined;
   const address = CONTRACT_ADDRESS;
   const client = createReadClient();
-  const health = await readMaybe<{ unreadable_records?: number | string }>(() =>
-    client.readContract({ address, functionName: "get_source_health", args: [] }),
-  );
+  const health = await client.readContract({
+    address,
+    functionName: "get_source_health",
+    args: [],
+  }) as { unreadable_records?: number | string; observed_at?: string };
+  if (!health.observed_at) return undefined;
   const value = health?.unreadable_records;
   if (value === undefined) return undefined;
   const parsed = typeof value === "number" ? value : Number(value);
@@ -124,8 +122,12 @@ export async function waitAccepted(client: Client, hash: TransactionHash) {
   });
   const finalized = await client.getTransaction({ hash });
   const result = finalized?.consensus_data?.leader_receipt?.[0]?.execution_result;
-  if (result && result !== "SUCCESS") {
-    throw new Error(`GenLayer contract execution failed (${result}). Transaction: ${hash}`);
+  if (result !== "SUCCESS") {
+    const error = finalized?.consensus_data?.leader_receipt?.[0]?.error;
+    throw new Error(
+      `GenLayer contract execution did not succeed (${result ?? "MISSING"})` +
+        `${error ? `: ${error}` : ""}. Transaction: ${hash}`,
+    );
   }
   return receipt;
 }
@@ -141,17 +143,16 @@ export async function waitAccepted(client: Client, hash: TransactionHash) {
  * fact about the argument rather than a fault, so it must not become a red
  * error banner.
  */
-async function readMaybe<T>(read: () => Promise<unknown>): Promise<T | undefined> {
+async function readOptional<T>(read: () => Promise<unknown>): Promise<T | undefined> {
   try {
     return (await read()) as T;
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
+    const lower = message.toLowerCase();
     if (
-      message.includes("execution failed") ||
-      message.includes("Missing or invalid parameters") ||
-      message.includes("Rate limit exceeded") ||
-      message.includes("QueuePool limit") ||
-      message.includes("Unexpected token")
+      lower.includes("unknown determination") ||
+      lower.includes("unknown appeal") ||
+      lower.includes("no determination exists")
     ) {
       return undefined;
     }

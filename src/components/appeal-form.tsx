@@ -28,6 +28,13 @@ const GROUNDS: AppealGrounds[] = [
   "STALE_SOURCE",
 ];
 
+const CONTRACT_GROUNDS: Record<AppealGrounds, string> = {
+  DIFFERENT_PARTY: "DIFFERENT_PARTY: the appellant says the subject is a different legal party.",
+  INVALID_ASSOCIATION: "INVALID_ASSOCIATION: the cited relationship does not establish the asserted identity.",
+  DELISTED: "DELISTED: the designation record has been removed or superseded by the authority.",
+  STALE_SOURCE: "STALE_SOURCE: the finding relies on source material that is no longer current.",
+};
+
 /**
  * The appeal form.
  *
@@ -101,7 +108,7 @@ export function AppealForm({ id }: { id: string }) {
       getWriteClient,
       {
         method: "appeal",
-        args: [id, evidence.trim(), grounds],
+        args: [id, evidence.trim(), CONTRACT_GROUNDS[grounds]],
         value: bondWei,
         cost: formatGen(bondWei),
         label,

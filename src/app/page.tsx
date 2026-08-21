@@ -8,7 +8,6 @@ import {
   fetchDetermination,
 } from "@/lib/data-source";
 import {
-  DAMAGED_RECORD_COUNT,
   isExpiredUnfinalised,
   type Determination,
   type DeterminationSummary,
@@ -25,7 +24,7 @@ import { StatusStamp } from "@/components/stamp";
 export default function HomePage() {
   const [featured, setFeatured] = useState<Determination | undefined>();
   const [rows, setRows] = useState<DeterminationSummary[]>([]);
-  const [damaged, setDamaged] = useState(DAMAGED_RECORD_COUNT);
+  const [damaged, setDamaged] = useState<number | undefined>();
 
   useEffect(() => {
     let live = true;
@@ -128,7 +127,9 @@ export default function HomePage() {
           <Answer term="Inconclusive">
             The authority&rsquo;s own file is damaged at exactly the point that would settle it.
             OFAC truncates its Remarks column at 1,000 characters, and{" "}
-            <span className="rc-tabular font-semibold">{damaged} records</span> currently have a
+            <span className="rc-tabular font-semibold">
+              {damaged === undefined ? "source health unavailable" : `${damaged} records`}
+            </span>{" "}currently have a
             digital-currency address cut mid-value. A subject matching only the surviving part is
             recorded as unresolved, in writing, rather than quietly passed.
           </Answer>
