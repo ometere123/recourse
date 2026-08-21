@@ -14,7 +14,11 @@ import {
   optionalFiniteNumber,
   requireEnum,
 } from "../../src/lib/live-coercion.ts";
-import { inspectTransaction, requireFinalizedSuccess } from "../../src/lib/transaction-status.ts";
+import {
+  inspectTransaction,
+  requireFinalizedSuccess,
+  shouldPollTransaction,
+} from "../../src/lib/transaction-status.ts";
 import { addTransaction, loadTransactions } from "../../src/lib/storage.ts";
 
 const VERDICTS = ["UNKNOWN", "CLEAR", "FLAGGED", "INCONCLUSIVE", "CONTESTED"] as const;
@@ -167,6 +171,11 @@ test("persisted transaction survives a reload through the production storage hel
     createdAt: "2026-08-21T00:00:00Z",
     status: "ACCEPTED",
   });
-  assert.equal(loadTransactions()[0]?.status, "ACCEPTED");
+  const reloaded = loadTransactions()[0];
+  assert.equal(reloaded?.status, "ACCEPTED");
+  assert.equal(
+    reloaded && shouldPollTransaction(reloaded, Date.parse("2026-08-21T00:01:00Z"), 86_400_000),
+    true,
+  );
   delete (globalThis as { window?: unknown }).window;
 });

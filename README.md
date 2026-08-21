@@ -60,10 +60,11 @@ The repository contains the tested scanner, suite, and pinned authority fixtures
 
 ```bash
 npm run verify:schema
-node scripts/exercise-studionet.mjs <keystore> <password>
+node scripts/exercise-studionet.mjs \
+  <report-tx-hash> <screen-tx-hash> <determination-id> <subject> <reporter-address>
 ```
 
-The live proof script waits for `FINALIZED`, then requires explicit GenVM `SUCCESS`. It identifies the exact report by comparing before/after IDs and verifying subject, reporter, bond, and pending state before screening. It exits immediately on rollback and prints machine-readable evidence. A successful funded run has not yet been captured in this repository.
+The live proof verifier never handles signer material. Payable writes must be submitted separately through an already-unlocked wallet or CLI account. Given the returned report and screen hashes plus the exact determination identity, the verifier waits for `FINALIZED`, requires explicit GenVM `SUCCESS`, validates subject, reporter, bond, determination id and final non-pending state, then reads `check`, source health and stats. It exits on rollback/error and prints machine-readable evidence. A successful bonded run has not yet been captured in this repository.
 
 Current local release checks:
 
@@ -73,7 +74,7 @@ npm run build              PASS (Next.js 16 production build; 7 routes generated
 python -m py_compile       PASS for contracts/Recourse.py
 genvm-lint check           PASS: 16 methods (8 view, 8 write), 0 constructor args
 embedded prefilter suite   PASS: 52 run, 0 failures, 0 errors, 0 skipped
-direct contract tests      PASS: 19 tests
+direct contract tests      PASS: 32 tests
 frontend fail-closed tests PASS: 12 tests
 StudioNet schema            PASS: 16 required methods present; prefilter fingerprint and stats read successfully
 ```
@@ -102,7 +103,7 @@ All writes show wallet, transaction, consensus, expected-rejection, external-sou
 
 ## Honest limits
 
-Recourse covers the public exports named in the contract; it is not a universal sanctions or KYC service and is not legal advice. `NOT_LISTED` means only that a subject was not found in the successfully readable scope of the specific exports checked by that determination. OFAC truncates some long `Remarks` fields, so an address cut at the source is explicitly `INCONCLUSIVE`. Public files can change, disappear, or be republished; `rescreen()` and `refresh_source_health()` make that visible rather than hiding it. StudioNet GEN is simulated network value. The repository includes a rate-limited `scripts/exercise-studionet.mjs` report/screen walk, but no successful live report or screen transaction is claimed yet. Direct tests cover report validation, duplicate/open state, status mapping, appeal creation and rejection, expiry latching, pagination, rescreen safety, and source-health/stat defaults; consensus-dependent semantic adjudication remains pending live proof.
+Recourse covers the public exports named in the contract; it is not a universal sanctions or KYC service and is not legal advice. `NOT_LISTED` means only that a subject was not found in the successfully readable scope of the specific exports checked by that determination. OFAC truncates some long `Remarks` fields, so an address cut at the source is explicitly `INCONCLUSIVE`. Public files can change, disappear, or be republished; `rescreen()` and `refresh_source_health()` make that visible rather than hiding it. StudioNet GEN is simulated network value. The repository includes a rate-limited proof verifier, but no successful live report or screen transaction is claimed yet. The available GenLayer CLI v0.39.2 exposes a fee-deposit flag but no payable contract-value flag, so the required bonded `report()` could not be submitted through the mandated already-unlocked CLI account; no credential export or alternate signer workaround was used. Direct tests execute the production address and name screen paths, source failure/truncation handling, bounded-candidate enforcement, all three appeal dispositions, settlement latches, pagination and rescreen rules. Full validator consensus and large-source runtime remain pending live proof.
 
 ## Submission notes
 

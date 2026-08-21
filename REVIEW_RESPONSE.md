@@ -27,7 +27,7 @@ The contract fetches OFAC `SDN.CSV`, OFAC `ALT.CSV`, and the UN consolidated exp
 
 ## Current release evidence
 
-The release contract is deployed at `0xA73d81f1f7Cf772AC5976317eE12D259a67D48F7` by transaction `0xe10234c3fe7c27bafb971c06cdf450af3397c9c8cf91a9bf9fd4ba26ad550173`. The deployed schema exposes all 16 required methods, and `prefilter_fingerprint()` plus `stats()` read successfully. The application includes the root, check, report, determinations, determination detail, appeal and docs routes, wallet and transaction lifecycle, strict live adapters, schema verifier, and a paced `scripts/exercise-studionet.mjs` funded report/screen walk. The standalone write walk remains unverified: its first RPC read failed with outbound `EACCES`, the escalation request was denied, and no transaction was submitted.
+The release contract is deployed at `0xA73d81f1f7Cf772AC5976317eE12D259a67D48F7` by transaction `0xe10234c3fe7c27bafb971c06cdf450af3397c9c8cf91a9bf9fd4ba26ad550173`. The deployed schema exposes all 16 required methods, and `prefilter_fingerprint()` plus `stats()` read successfully. The application includes the root, check, report, determinations, determination detail, appeal and docs routes, wallet and transaction lifecycle, strict live adapters, schema verifier, and a paced public-data proof verifier. The bonded write walk remains unverified: the mandated active CLI account is unlocked, but CLI v0.39.2 cannot attach payable application value to `report()`. No transaction was submitted and no signer material was exported.
 
 | Release check | Evidence |
 | --- | --- |
@@ -39,13 +39,13 @@ The release contract is deployed at `0xA73d81f1f7Cf772AC5976317eE12D259a67D48F7`
 | Schema | PASS, 16 required methods via GenLayer CLI |
 | Prefilter textual parity | PASS, 582 lines / 11 functions / 23,679 bytes |
 | Embedded behavioral corpus | PASS, 52 run / 0 failures / 0 errors / 0 skipped |
-| Direct contract tests | PASS, 19 tests |
+| Direct contract tests | PASS, 32 tests; production `screen()` address/name branches, truncation/unavailable handling, source health, bounded-candidate rejection, appeal dispositions and settlement latches included |
 | Frontend fail-closed regressions | PASS, 12 tests |
 | GenVM lint | PASS, 16 methods / 8 views / 8 writes / 0 constructor args |
 | TypeScript | PASS |
 | ESLint | PASS |
 | Production build | PASS, 7 product routes plus not-found |
-| Successful bonded report | BLOCKED before submission: this workspace denied outbound RPC; no transaction hash claimed |
+| Successful bonded report | BLOCKED: mandated CLI v0.39.2 account is unlocked, but `genlayer write` has no payable contract-value option (its `--fee-value` is only the fee deposit); no transaction was submitted and no credential workaround was used |
 | Successful screen | NOT RUN because no report transaction was submitted |
 | Stored determination/check/source health proof | NOT RUN; the harness has no captured live output |
 | Appeal branch | Partial direct proof: ASSERTED appeal creation, validation, expiry/no-double-settlement and exact `LISTED` rejection; live semantic adjudication remains pending |
@@ -58,3 +58,4 @@ The release contract is deployed at `0xA73d81f1f7Cf772AC5976317eE12D259a67D48F7`
 - Model-based identity and appeal outcomes are consensus judgments, not legal determinations.
 - The included fixture mode is for exploration and development only; every live page is explicitly marked `LIVE CONTRACT`, and a failed live read renders unavailable rather than substituting a fixture.
 - StudioNet is a simulated environment and does not provide production-chain settlement guarantees.
+- The positive bonded StudioNet lifecycle and large-source validator execution remain unproven until a signer interface capable of supplying payable contract value is used. The proof verifier accepts only resulting hashes and public identity fields; it does not load keys or passwords.

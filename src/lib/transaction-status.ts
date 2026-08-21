@@ -1,5 +1,23 @@
-import type { TxStage } from "./contract-types.ts";
+import { normaliseIsoZ, type StoredTransaction, type TxStage } from "./contract-types.ts";
 import { coerceTransactionStage, requireRecord } from "./live-coercion.ts";
+
+export const TERMINAL_TRANSACTION_STAGES: ReadonlySet<TxStage> = new Set([
+  "FINALIZED",
+  "CANCELED",
+  "UNDETERMINED",
+  "VALIDATORS_TIMEOUT",
+  "LEADER_TIMEOUT",
+]);
+
+export function shouldPollTransaction(
+  transaction: StoredTransaction,
+  nowMs: number,
+  staleAfterMs: number,
+): boolean {
+  if (TERMINAL_TRANSACTION_STAGES.has(transaction.status)) return false;
+  const createdAt = Date.parse(normaliseIsoZ(transaction.createdAt));
+  return Number.isFinite(createdAt) && nowMs - createdAt < staleAfterMs;
+}
 
 export type TransactionInspection = {
   stage: TxStage;

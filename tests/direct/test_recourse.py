@@ -2,6 +2,8 @@ MIN_REPORT_BOND_WEI = 1_000_000_000_000_000
 MIN_APPEAL_BOND_WEI = 1_000_000_000_000_000
 SUBJECT = "0x1111111111111111111111111111111111111111"
 BASIS = "https://example.com/reporter-context"
+LISTED_ETH_ADDRESS = "0x098b716b8aaf21512996dc57eb0615e2383e2f96"
+TRUNCATED_BTC_ADDRESS = "1B11Ezqg3AXjqPeVxwqmnpump4nsFvVvW3"
 
 
 def test_unseen_subject_is_unknown(contract):
@@ -266,3 +268,260 @@ def test_rescreen_requires_inconclusive_and_cooldown(direct_vm, contract, direct
     contract.determinations[determination_id] = stored
     with direct_vm.expect_revert("cooldown"):
         contract.rescreen(determination_id)
+
+
+def _mock_sdn_fixture(direct_vm):
+    with open("tests/prefilter/fixtures/SDN.CSV", "rb") as fixture:
+        direct_vm.mock_web(
+            r".*sanctionslistservice\.ofac\.treas\.gov/api/download/sdn\.csv.*",
+            {"status": 200, "body": fixture.read()},
+        )
+
+
+def _mock_name_authorities(direct_vm):
+    for filename, pattern in (
+        ("SDN.CSV", r".*sanctionslistservice\.ofac\.treas\.gov/api/download/sdn\.csv.*"),
+        ("ALT.CSV", r".*sanctionslistservice\.ofac\.treas\.gov/api/download/alt\.csv.*"),
+        ("consolidated.xml", r".*scsanctions\.un\.org/resources/xml/en/consolidated\.xml.*"),
+    ):
+        with open(f"tests/prefilter/fixtures/{filename}", "rb") as fixture:
+            direct_vm.mock_web(pattern, {"status": 200, "body": fixture.read()})
+
+
+def test_screen_executes_exact_address_path_without_llm(
+    direct_vm, contract, direct_alice
+):
+    _mock_sdn_fixture(direct_vm)
+    determination_id = _create_report(
+        direct_vm, contract, direct_alice, subject=LISTED_ETH_ADDRESS
+    )
+    direct_vm.mock_llm(r".*", "this response must never be consulted")
+    contract.screen(determination_id)
+    determination = contract.get_determination(determination_id)
+    assert determination["status"] == "LISTED"
+    assert determination["match_kind"] == "EXACT"
+    assert determination["entry_ent_num"] != ""
+    assert determination["bond_settled"] is True
+    assert contract.check(LISTED_ETH_ADDRESS)["result"] == "FLAGGED"
+
+
+def test_screen_executes_not_listed_path_and_slashes_once(
+    direct_vm, contract, direct_alice
+):
+    _mock_sdn_fixture(direct_vm)
+    determination_id = _create_report(direct_vm, contract, direct_alice)
+    contract.screen(determination_id)
+    determination = contract.get_determination(determination_id)
+    assert determination["status"] == "NOT_LISTED"
+    assert determination["match_kind"] == "NONE"
+    assert determination["bond_settled"] is True
+    assert int(contract.stats()["bounty_pool"]) == MIN_REPORT_BOND_WEI
+    assert contract.check(SUBJECT)["result"] == "CLEAR"
+    with direct_vm.expect_revert("not PENDING"):
+        contract.screen(determination_id)
+    assert int(contract.stats()["bounty_pool"]) == MIN_REPORT_BOND_WEI
+
+
+def test_screen_source_unavailable_is_inconclusive_and_refunds(
+    direct_vm, contract, direct_alice
+):
+    direct_vm.mock_web(
+        r".*sanctionslistservice\.ofac\.treas\.gov/api/download/sdn\.csv.*",
+        {"status": 503, "body": b"unavailable"},
+    )
+    determination_id = _create_report(direct_vm, contract, direct_alice)
+    contract.screen(determination_id)
+    determination = contract.get_determination(determination_id)
+    assert determination["status"] == "INCONCLUSIVE"
+    assert determination["reason"] == "SOURCE_UNAVAILABLE"
+    assert determination["bond_settled"] is True
+    assert int(contract.stats()["bounty_pool"]) == 0
+    assert contract.check(SUBJECT)["result"] == "INCONCLUSIVE"
+
+
+def test_screen_truncated_authority_record_never_becomes_clear(
+    direct_vm, contract, direct_alice
+):
+    _mock_sdn_fixture(direct_vm)
+    determination_id = _create_report(
+        direct_vm, contract, direct_alice, subject=TRUNCATED_BTC_ADDRESS
+    )
+    contract.screen(determination_id)
+    determination = contract.get_determination(determination_id)
+    assert determination["status"] == "INCONCLUSIVE"
+    assert determination["reason"] == "SOURCE_TRUNCATED"
+    assert determination["match_kind"] == "TRUNCATED_PREFIX"
+    assert determination["entry_name"] == "HYDRA MARKET"
+    assert contract.check(TRUNCATED_BTC_ADDRESS)["result"] == "INCONCLUSIVE"
+
+
+def test_refresh_source_health_records_canonical_source_facts(
+    direct_vm, contract
+):
+    _mock_sdn_fixture(direct_vm)
+    contract.refresh_source_health()
+    health = contract.get_source_health()
+    assert int(health["source_len"]) == 5_647_099
+    assert int(health["unreadable_records"]) == 13
+
+
+def test_refresh_source_health_fails_closed_when_source_is_unavailable(
+    direct_vm, contract
+):
+    direct_vm.mock_web(
+        r".*sanctionslistservice\.ofac\.treas\.gov/api/download/sdn\.csv.*",
+        {"status": 503, "body": b"unavailable"},
+    )
+    with direct_vm.expect_revert("could not be retrieved as a complete export"):
+        contract.refresh_source_health()
+    assert contract.get_source_health()["source_len"] == "0"
+
+
+def test_name_screen_accepts_only_a_bounded_candidate(
+    direct_vm, contract, direct_alice
+):
+    _mock_name_authorities(direct_vm)
+    direct_vm.mock_llm(
+        r".*primary-source sanctions records.*",
+        '{"verdict":"SAME_ENTITY","ent_num":"33854",'
+        '"basis":"The exact CHATEX record denotes the reported entity.",'
+        '"rationale":"Exact normalized name and published record."}',
+    )
+    determination_id = _create_report(
+        direct_vm, contract, direct_alice, subject="Chatex", kind="NAME"
+    )
+    contract.screen(determination_id)
+    determination = contract.get_determination(determination_id)
+    assert determination["status"] == "ASSERTED"
+    assert determination["entry_ent_num"] == "33854"
+    assert determination["bond_settled"] is False
+    assert determination["appeal_deadline"] != ""
+
+
+def test_name_screen_discards_model_invented_candidate(
+    direct_vm, contract, direct_alice
+):
+    _mock_name_authorities(direct_vm)
+    direct_vm.mock_llm(
+        r".*primary-source sanctions records.*",
+        '{"verdict":"SAME_ENTITY","ent_num":"999999999",'
+        '"basis":"Invented record.","rationale":"Not in bounded evidence."}',
+    )
+    determination_id = _create_report(
+        direct_vm, contract, direct_alice, subject="Chatex", kind="NAME"
+    )
+    contract.screen(determination_id)
+    determination = contract.get_determination(determination_id)
+    assert determination["status"] == "INCONCLUSIVE"
+    assert determination["reason"] == "MODEL_UNUSABLE"
+    assert determination["entry_ent_num"] == ""
+    assert determination["bond_settled"] is True
+
+
+def test_name_screen_with_no_candidates_never_invokes_llm(
+    direct_vm, contract, direct_alice
+):
+    _mock_name_authorities(direct_vm)
+    direct_vm.mock_llm(r".*", "this response must never be consulted")
+    determination_id = _create_report(
+        direct_vm,
+        contract,
+        direct_alice,
+        subject="ZZZ ABSENT AUTHORITY SUBJECT ZZZ",
+        kind="NAME",
+    )
+    contract.screen(determination_id)
+    determination = contract.get_determination(determination_id)
+    assert determination["status"] == "NOT_LISTED"
+    assert determination["entry_ent_num"] == ""
+    assert determination["bond_settled"] is True
+
+
+def test_name_screen_malformed_model_output_is_inconclusive(
+    direct_vm, contract, direct_alice
+):
+    _mock_name_authorities(direct_vm)
+    direct_vm.mock_llm(
+        r".*primary-source sanctions records.*",
+        '{"verdict":"NOT_AN_ALLOWED_VERDICT","ent_num":"33854"}',
+    )
+    determination_id = _create_report(
+        direct_vm, contract, direct_alice, subject="Chatex", kind="NAME"
+    )
+    contract.screen(determination_id)
+    determination = contract.get_determination(determination_id)
+    assert determination["status"] == "INCONCLUSIVE"
+    assert determination["reason"] == "IDENTITY_UNCLEAR"
+    assert determination["bond_settled"] is True
+
+
+def _create_pending_appeal(direct_vm, contract, reporter, appellant):
+    determination_id = _make_asserted(direct_vm, contract, reporter)
+    direct_vm.sender = appellant
+    direct_vm.value = MIN_APPEAL_BOND_WEI
+    appeal_id = contract.appeal(
+        determination_id,
+        "https://example.com/evidence",
+        "The corporate registration number identifies a different legal party.",
+    )
+    return determination_id, appeal_id
+
+
+def _mock_appeal_sources(direct_vm, disposition):
+    _mock_sdn_fixture(direct_vm)
+    direct_vm.mock_web(
+        r".*example\.com/evidence.*",
+        {"status": 200, "body": b"Registry number 999 belongs to another company."},
+    )
+    direct_vm.mock_llm(
+        r".*Does the submitted evidence defeat the stated basis above.*",
+        '{"disposition":"' + disposition + '",'
+        '"basis_addressed":"same entity basis",'
+        '"rationale":"The submitted registry evidence was weighed against that basis."}',
+    )
+
+
+def test_appeal_adjudication_overturned_settles_both_bonds_once(
+    direct_vm, contract, direct_alice, direct_bob
+):
+    determination_id, appeal_id = _create_pending_appeal(
+        direct_vm, contract, direct_alice, direct_bob
+    )
+    _mock_appeal_sources(direct_vm, "OVERTURNED")
+    contract.adjudicate_appeal(appeal_id)
+    assert contract.get_determination(determination_id)["status"] == "OVERTURNED"
+    appeal = contract.get_appeal(appeal_id)
+    assert appeal["status"] == "OVERTURNED"
+    assert appeal["bond_settled"] is True
+    assert contract.get_determination(determination_id)["bond_settled"] is True
+    with direct_vm.expect_revert("not PENDING"):
+        contract.adjudicate_appeal(appeal_id)
+
+
+def test_appeal_adjudication_upheld_slashes_appeal_bond(
+    direct_vm, contract, direct_alice, direct_bob
+):
+    determination_id, appeal_id = _create_pending_appeal(
+        direct_vm, contract, direct_alice, direct_bob
+    )
+    _mock_appeal_sources(direct_vm, "UPHELD")
+    contract.adjudicate_appeal(appeal_id)
+    assert contract.get_determination(determination_id)["status"] == "UPHELD"
+    assert contract.get_appeal(appeal_id)["status"] == "UPHELD"
+    assert int(contract.stats()["bounty_pool"]) == MIN_APPEAL_BOND_WEI
+
+
+def test_appeal_adjudication_unclear_returns_bonds_as_contested(
+    direct_vm, contract, direct_alice, direct_bob
+):
+    determination_id, appeal_id = _create_pending_appeal(
+        direct_vm, contract, direct_alice, direct_bob
+    )
+    _mock_appeal_sources(direct_vm, "UNCLEAR")
+    contract.adjudicate_appeal(appeal_id)
+    assert contract.get_determination(determination_id)["status"] == "CONTESTED"
+    appeal = contract.get_appeal(appeal_id)
+    assert appeal["status"] == "CONTESTED"
+    assert appeal["bond_settled"] is True
+    assert contract.get_determination(determination_id)["bond_settled"] is True
+    assert int(contract.stats()["bounty_pool"]) == 0

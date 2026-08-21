@@ -13,7 +13,7 @@ import {
 import { createReadClient } from "@/lib/genlayer/read-client";
 import type { TransactionHash } from "genlayer-js/types";
 import { CONTRACT_ADDRESS } from "@/lib/genlayer/config";
-import { normaliseIsoZ, type StoredTransaction, type TxStage } from "@/lib/contract-types";
+import type { StoredTransaction, TxStage } from "@/lib/contract-types";
 import {
   addTransaction,
   clearTransactions,
@@ -21,16 +21,11 @@ import {
   saveTransactions,
   STALE_AFTER_MS,
 } from "@/lib/storage";
-import { inspectTransaction } from "@/lib/transaction-status";
-
-/** Nothing further will happen to a transaction in one of these states. */
-const COMPLETE: ReadonlySet<string> = new Set([
-  "FINALIZED",
-  "CANCELED",
-  "UNDETERMINED",
-  "VALIDATORS_TIMEOUT",
-  "LEADER_TIMEOUT",
-]);
+import {
+  inspectTransaction,
+  shouldPollTransaction,
+  TERMINAL_TRANSACTION_STAGES,
+} from "@/lib/transaction-status";
 
 const POLL_MS = 15000;
 
@@ -102,8 +97,7 @@ export function TransactionProvider({ children }: { children: ReactNode }) {
       if (polling.current) return;
       const now = Date.now();
       const pendingHashes = loadTransactions()
-        .filter((tx) => !COMPLETE.has(tx.status))
-        .filter((tx) => now - Date.parse(normaliseIsoZ(tx.createdAt)) < STALE_AFTER_MS)
+        .filter((tx) => shouldPollTransaction(tx, now, STALE_AFTER_MS))
         .map((tx) => tx.hash);
       if (pendingHashes.length === 0) return;
 
@@ -138,7 +132,7 @@ export function TransactionProvider({ children }: { children: ReactNode }) {
   }, [update]);
 
   const active = useMemo(
-    () => transactions.filter((tx) => !COMPLETE.has(tx.status)),
+    () => transactions.filter((tx) => !TERMINAL_TRANSACTION_STAGES.has(tx.status)),
     [transactions],
   );
 
@@ -156,4 +150,4 @@ export function useTransactions(): TransactionValue {
   return value;
 }
 
-export { COMPLETE as COMPLETE_STATUSES };
+export { TERMINAL_TRANSACTION_STAGES as COMPLETE_STATUSES };
