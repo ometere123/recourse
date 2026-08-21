@@ -1,0 +1,167 @@
+{
+  "$comment": "Machine-readable record of the StudioNet proof run. Every hash here is full and unabbreviated, and every stored value was read back from the deployed contract on 2026-08-21 rather than transcribed from a console. Re-read any of it with `genlayer call <contract> <method>`. What was NOT proven live is listed under notProvenOnChain and is not claimed anywhere else in this file.",
+  "network": "studionet",
+  "endpoint": "https://studio.genlayer.com/api",
+  "contract": "0xA73d81f1f7Cf772AC5976317eE12D259a67D48F7",
+  "recordedAt": "2026-08-21",
+  "signer": {
+    "alias": "termsmet-studionet-submitter",
+    "address": "0xB5EcD6dDa36B370aca4af5E2005d8E2Ae89c6db2",
+    "note": "Obtained through the CLI's own BaseAction/getClient path and the OS-keychain cache populated by `genlayer account unlock`. No key was exported, no wallet or keystore was created, and no password was supplied on a command line or written to a file."
+  },
+  "deployment": {
+    "transaction": "0xe10234c3fe7c27bafb971c06cdf450af3397c9c8cf91a9bf9fd4ba26ad550173",
+    "gitCommit": "ff3fc191b40f43e6d4e2639c2210446eab90c1c8",
+    "sourcePath": "contracts/Recourse.py",
+    "contractSha256": "d21cbe18a55c51385c0b68c56d0b4127c8ba0fbbf7618ec07bba47e9a15f60a1",
+    "deployedSourceVerified": true,
+    "parityProof": {
+      "method": "genlayer code 0xA73d81f1f7Cf772AC5976317eE12D259a67D48F7",
+      "retrievedOn": "2026-08-21",
+      "localBytes": 101872,
+      "deployedBytes": 101872,
+      "sha256Equal": true
+    }
+  },
+  "provenLifecycle": {
+    "path": "NAME",
+    "determinationId": "d1",
+    "subject": "AMNOKGANG TECHNOLOGY DEVELOPMENT COMPANY",
+    "subjectKind": "NAME",
+    "basisUrl": "https://sanctionslistservice.ofac.treas.gov/api/download/sdn.csv",
+    "transactions": [
+      {
+        "step": "report",
+        "hash": "0xfcd3f63cd188fb9697c78b5751e259c7464db82bee04a7a2a0f896423e452aad",
+        "kind": "payable write",
+        "valueWei": "1000000000000000",
+        "consensusStatus": "FINALIZED",
+        "genvmResult": "SUCCESS",
+        "leaderReturn": "d1",
+        "validatorExecutions": { "success": 4, "error": 2 },
+        "errorsWereFatal": false,
+        "votes": { "AGREE": 3, "IDLE": 2 }
+      },
+      {
+        "step": "screen",
+        "hash": "0x2ed5c3d24bc8755aa8ef79a925f23311b65627432b768a5c4b7c53c2512a1523",
+        "kind": "consensus write",
+        "args": ["d1"],
+        "consensusStatus": "FINALIZED",
+        "genvmResult": "SUCCESS"
+      },
+      {
+        "step": "refresh_source_health",
+        "hash": "0xb93fcf39310baf4e16be5798c59f67a02eb169f239cc597804b73caddb9442ab",
+        "kind": "consensus write",
+        "consensusStatus": "FINALIZED",
+        "genvmResult": "SUCCESS"
+      }
+    ]
+  },
+  "liveSourceProof": {
+    "$comment": "The single most load-bearing number in this repository. It answers whether a multi-megabyte authority file can actually be fetched and scanned inside a GenLayer consensus round, which is the product's central risk.",
+    "url": "https://sanctionslistservice.ofac.treas.gov/api/download/sdn.csv",
+    "bytesFetchedInConsensus": 5647099,
+    "matchesVendoredFixtureExactly": true,
+    "unreadableRecords": 13,
+    "corroboratedBy": [
+      "0xfcd3f63cd188fb9697c78b5751e259c7464db82bee04a7a2a0f896423e452aad",
+      "0x2ed5c3d24bc8755aa8ef79a925f23311b65627432b768a5c4b7c53c2512a1523",
+      "0xb93fcf39310baf4e16be5798c59f67a02eb169f239cc597804b73caddb9442ab"
+    ],
+    "blockerFound": false,
+    "note": "No size, runtime, fetch-limit or validator constraint was hit. 5,647,099 bytes is byte-exact against tests/prefilter fixtures, and three independent finalized transactions report the same length."
+  },
+  "storedState": {
+    "get_determination": {
+      "$comment": "Read back with `genlayer call 0xA73d81f1f7Cf772AC5976317eE12D259a67D48F7 get_determination --args d1`.",
+      "id": "d1",
+      "status": "ASSERTED",
+      "subject": "AMNOKGANG TECHNOLOGY DEVELOPMENT COMPANY",
+      "subject_kind": "NAME",
+      "subject_norm": "AMNOKGANG TECHNOLOGY DEVELOPMENT COMPANY",
+      "reporter": "0xB5EcD6dDa36B370aca4af5E2005d8E2Ae89c6db2",
+      "basis_url": "https://sanctionslistservice.ofac.treas.gov/api/download/sdn.csv",
+      "entry_ent_num": "57056",
+      "verdict": "DPRK4",
+      "source_len": "5647099",
+      "alias_count": "4",
+      "damaged_total": "13",
+      "un_corroborated": false,
+      "appealable": true,
+      "appeal_id": "",
+      "appeal_deadline": "2026-08-28T14:03:52Z",
+      "bond": "1000000000000000",
+      "bond_settled": false,
+      "created_at": "2026-08-21T14:01:27.214175Z",
+      "screened_at": "2026-08-21T14:03:52.505596Z",
+      "reason": "",
+      "match_kind": ""
+    },
+    "fieldNotes": {
+      "verdict": "On the ASSERTED path `verdict` stores the identity round's cited basis, not a status. Here that basis is the OFAC program code DPRK4 carried by SDN record ent_num 57056. The status is the separate `status` field.",
+      "bond_settled": "Correctly false. An ASSERTED finding rests on judgment, so the 0.001 GEN reporter bond stays escrowed until the appeal window closes on 2026-08-28T14:03:52Z or an appeal resolves. Paying a reporter before the subject can respond would defeat the mechanism.",
+      "entry_ent_num": "57056 was re-checked by the contract against the arithmetic candidate set before storage, so the identity round could not name a record outside the evidence it was shown."
+    },
+    "check": {
+      "args": ["AMNOKGANG TECHNOLOGY DEVELOPMENT COMPANY"],
+      "result": "FLAGGED",
+      "status": "ASSERTED",
+      "determination_id": "d1",
+      "shape": "NAME",
+      "note": "DPRK4",
+      "reason": "",
+      "appealable": true,
+      "source_len": "5647099",
+      "unreadable_records": "13"
+    },
+    "get_source_health": {
+      "sdn_url": "https://sanctionslistservice.ofac.treas.gov/api/download/sdn.csv",
+      "alt_url": "https://sanctionslistservice.ofac.treas.gov/api/download/alt.csv",
+      "un_url": "https://scsanctions.un.org/resources/xml/en/consolidated.xml",
+      "source_len": "5647099",
+      "unreadable_records": "13",
+      "sdn_min_bytes": "4000000",
+      "observed_at": "2026-08-21T14:11:19.481662Z"
+    },
+    "stats": {
+      "determinations": "1",
+      "appeals": "0",
+      "balance": "2000000000000000",
+      "bounty_pool": "0",
+      "min_report_bond_wei": "1000000000000000",
+      "min_appeal_bond_wei": "1000000000000000",
+      "appeal_window_seconds": "604800",
+      "rescreen_cooldown_seconds": "86400"
+    }
+  },
+  "strandedValue": {
+    "amountWei": "1000000000000000",
+    "amountGen": "0.001",
+    "transaction": "0xdbcc1664ecae30c06f3f9f9e5f9b3db49f6c325ff233388c8b7ea4d5c5ae98a0",
+    "consensusStatus": "FINALIZED",
+    "genvmResult": "contract_error",
+    "exitCode": 1,
+    "attemptedPath": "ADDRESS",
+    "cause": "GenLayer CLI 0.39.2 `parseScalar` (src/commands/contracts/index.ts) coerces any argument matching ^0x[0-9a-fA-F]{40}$ into a CalldataAddress. `report` declares `subject: str`, so it received an Address object and `subject.strip()` raised AttributeError. There is no CLI escape hatch: parseArg's JSON branch routes through coerceValue -> parseScalar as well.",
+    "whyNotRefunded": "StudioNet does not roll back `gl.message.value` when the GenVM reverts. A `raise gl.vm.UserError` is not an EVM revert, so the bond had already moved and stayed in the contract.",
+    "howToVerify": "`stats.balance` is 2000000000000000 wei while the only determination holds a 1000000000000000 wei escrowed bond. The 0.001 GEN difference is this stranded transfer.",
+    "recoverable": false,
+    "recoverableWhy": "The contract has no sweep or admin-withdraw path, which is deliberate -- an owner who can move escrowed bonds is a worse problem than a stranded 0.001 GEN of simulated network value. The amount is recorded here rather than written off silently.",
+    "contractDefect": false,
+    "contractDefectWhy": "The contract's input validation behaved correctly and rejected a malformed subject. The value loss is a property of the CLI's argument coercion combined with StudioNet revert semantics, not of contracts/Recourse.py."
+  },
+  "ci": {
+    "provider": "GitHub Actions",
+    "runId": "32492017163",
+    "commit": "cf716468e282b2d10f9d001970aa537a46782215",
+    "os": ["ubuntu-latest", "windows-latest"],
+    "conclusion": "success"
+  },
+  "notProvenOnChain": [
+    "The ADDRESS path. The only live attempt failed for the CLI-coercion reason recorded under strandedValue, so no live ADDRESS determination exists and none is claimed. The path is covered by direct tests against the production screen() code.",
+    "The appeal lifecycle. `d1` is appealable and its window is open until 2026-08-28T14:03:52Z, but no appeal was filed and no live adjudication occurred. All three appeal dispositions are covered by direct tests only.",
+    "A public application URL. None is recorded in this repository."
+  ]
+}
