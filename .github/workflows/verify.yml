@@ -20,8 +20,21 @@ jobs:
         with:
           python-version: "3.12"
           cache: pip
+          cache-dependency-path: requirements-dev.txt
       - run: npm ci
       - run: python -m pip install -r requirements-dev.txt
+      # gltest 0.29.2 picks its GenVM SDK by preferring whatever is already in
+      # ~/.cache/gltest-direct and only falling back to the newest genvm
+      # release. It always fetches one fixed asset name, genvm-universal.tar.xz,
+      # which releases after v0.2.16 stopped publishing -- so on a cold runner
+      # the fallback 404s. Seeding the cache with the last release that does
+      # publish that asset pins resolution to the same SDK verify:contract is
+      # developed against locally, instead of leaving it to float.
+      - name: Seed GenVM SDK cache (pins gltest to genvm v0.2.16)
+        run: |
+          mkdir -p ~/.cache/gltest-direct
+          curl -fsSL --retry 3 -o ~/.cache/gltest-direct/genvm-universal-v0.2.16.tar.xz \
+            https://github.com/genlayerlabs/genvm/releases/download/v0.2.16/genvm-universal.tar.xz
       - run: npm run verify
       - run: python -m py_compile contracts/Recourse.py
       - run: genvm-lint check contracts/Recourse.py --json
