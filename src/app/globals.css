@@ -1,0 +1,649 @@
+@import "tailwindcss";
+
+/* =========================================================================
+   RECOURSE — two-plate offset form printing
+   =========================================================================
+
+   The subject's own material tradition is government form printing: the way a
+   state prints things that carry consequence. That tradition is two ink plates
+   plus the paper, and the constraint is load-bearing rather than decorative.
+
+   EXACTLY TWO INKS PLUS PAPER. Stamp red and process blue. There is no third
+   hue anywhere in this stylesheet, and — importantly — there is no soft grey
+   for secondary text either. `--rule` is linework only; at 1.4:1 on paper it
+   could never carry a glyph. Every level of hierarchy in this product is
+   therefore carried by weight, size, tracking, rule and position. That is the
+   discipline. Adding one convenience grey would dissolve the system into a
+   dashboard, which is the thing this design refuses to be.
+
+   Measured on --paper (#FAFAF8):
+     ink     #14161A  → 16.6:1
+     stamp   #B02418  →  6.45:1   safe for text at any size
+     process #1F4FA8  →  7.34:1   safe for text at any size
+     rule    #C9CBD0  →  1.40:1   LINEWORK ONLY. Never a glyph.
+   ========================================================================= */
+
+:root {
+  --paper: #fafaf8;
+  --ink: #14161a;
+  --stamp: #b02418; /* ink 1 — listed, matched, adverse */
+  --process: #1f4fa8; /* ink 2 — appeal, procedural, overturned */
+  --rule: #c9cbd0;
+
+  /* This is a reading document, not a console. */
+  --rhythm: 32px;
+
+  /* System fallbacks keep builds and first paint independent of a font CDN. */
+  --font-bricolage: "Arial Narrow", Arial, sans-serif;
+  --font-public-sans: Arial, Helvetica, sans-serif;
+  --font-courier-prime: "Courier New", Courier, monospace;
+}
+
+@theme inline {
+  --color-paper: var(--paper);
+  --color-ink: var(--ink);
+  --color-stamp: var(--stamp);
+  --color-process: var(--process);
+  --color-rule: var(--rule);
+
+  --font-display: var(--font-bricolage), ui-sans-serif, sans-serif;
+  --font-body: var(--font-public-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-verbatim: var(--font-courier-prime), ui-monospace, monospace;
+
+  /* Scale: 12 · 13 · 16 · 20 · 26 · 34. Nothing between, nothing outside. */
+  --text-12: 12px;
+  --text-12--line-height: 16px;
+  --text-13: 13px;
+  --text-13--line-height: 20px;
+  --text-16: 16px;
+  --text-16--line-height: 26px;
+  --text-20: 20px;
+  --text-20--line-height: 28px;
+  --text-26: 26px;
+  --text-26--line-height: 32px;
+  --text-34: 34px;
+  --text-34--line-height: 38px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-public-sans), ui-sans-serif, system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 26px;
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+a {
+  color: inherit;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--stamp) 18%, transparent);
+}
+
+/* Visible keyboard focus in the system's own ink, never a browser default. */
+:focus-visible {
+  outline: 2px solid var(--process);
+  outline-offset: 2px;
+}
+
+/* -------------------------------------------------------------------------
+   Structure
+   ------------------------------------------------------------------------- */
+
+.rc-sheet {
+  margin: 0 auto;
+  max-width: 62rem;
+  padding: 0 20px;
+}
+
+/* 32px vertical rhythm, applied as flow rather than sprinkled margins. */
+.rc-flow > * + * {
+  margin-top: var(--rhythm);
+}
+.rc-flow-tight > * + * {
+  margin-top: calc(var(--rhythm) / 2);
+}
+
+/* Offset registration: the paired heavy/hairline rule that separates plates
+   on a printed form. Used for the masthead and the page footer only. */
+.rc-registration {
+  border-top: 3px solid var(--ink);
+  border-bottom: 1px solid var(--ink);
+  height: 5px;
+}
+
+.rc-rule {
+  border: 0;
+  border-top: 1px solid var(--rule);
+  margin: 0;
+}
+
+.rc-rule-ink {
+  border: 0;
+  border-top: 1px solid var(--ink);
+  margin: 0;
+}
+
+/* A section heading: tracked caps, then a hairline running to the margin. */
+.rc-section {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.rc-section::after {
+  content: "";
+  flex: 1;
+  border-top: 1px solid var(--rule);
+}
+
+.rc-label {
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* Field caption in the flow of a form: label, rule, value. */
+.rc-field-row {
+  display: grid;
+  grid-template-columns: 10rem 1fr;
+  gap: 4px 16px;
+  align-items: baseline;
+}
+@media (max-width: 640px) {
+  .rc-field-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* -------------------------------------------------------------------------
+   The plate — a bordered panel with its title cut into the top rule, the way
+   a boxed clause is printed on a form. `NO INFERENCE USED` is the one that
+   matters; the same object carries the disposition and the appeal record.
+   ------------------------------------------------------------------------- */
+
+.rc-plate {
+  position: relative;
+  border: 1px solid var(--ink);
+  padding: 24px 20px 20px;
+}
+
+.rc-plate > .rc-plate-title {
+  position: absolute;
+  top: 0;
+  left: 16px;
+  transform: translateY(-50%);
+  background: var(--paper);
+  padding: 0 8px;
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.rc-plate-stamp {
+  border-color: var(--stamp);
+  border-width: 2px;
+}
+.rc-plate-stamp > .rc-plate-title {
+  color: var(--stamp);
+}
+
+.rc-plate-process {
+  border-color: var(--process);
+}
+.rc-plate-process > .rc-plate-title {
+  color: var(--process);
+}
+
+/* The unstamped panel. The single most important visual decision in this
+   system: [EXTERNAL], [TRANSIENT] and [LLM_ERROR] are NOT findings, and they
+   must never wear a stamp. A dashed border with a void where the stamp
+   impression would be says "nothing was written about this subject". */
+.rc-plate-unstamped {
+  border-style: dashed;
+  border-color: var(--ink);
+}
+.rc-plate-unstamped > .rc-plate-title {
+  background: var(--paper);
+}
+
+.rc-void-stamp {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px dashed var(--ink);
+  padding: 6px 12px;
+  font-family: var(--font-bricolage), ui-sans-serif, sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+/* -------------------------------------------------------------------------
+   The stamp — the status word, as a struck impression.
+   Motion spec: scale 1.04 → 1.0, opacity 0 → 1, 180ms, once, on state change.
+   ------------------------------------------------------------------------- */
+
+.rc-stamp {
+  display: inline-block;
+  border: 2px solid currentColor;
+  padding: 4px 12px 3px;
+  font-family: var(--font-bricolage), ui-sans-serif, sans-serif;
+  font-size: 16px;
+  line-height: 26px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  animation: rc-strike 180ms ease-out 1;
+}
+
+.rc-stamp-lg {
+  font-size: 20px;
+  line-height: 28px;
+  padding: 6px 16px 5px;
+}
+
+@keyframes rc-strike {
+  from {
+    opacity: 0;
+    transform: scale(1.04);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* CONTESTED is terminal and honest, not a failure. Both plates disagree, so
+   both plates print: stamp on one edge, process on the other, word in ink. */
+.rc-stamp-contested {
+  color: var(--ink);
+  border-color: var(--ink);
+  border-left: 4px solid var(--stamp);
+  border-right: 4px solid var(--process);
+}
+
+/* PENDING has not been struck at all. Nothing has been determined. */
+.rc-stamp-pending {
+  border-style: dashed;
+  animation: none;
+}
+
+/* INCONCLUSIVE — the adverse plate was inked, but the impression could not be
+   completed because the authority's own file is cut short. Dashed RED, and the
+   distinction from dashed BLACK is load-bearing:
+     dashed black  = nothing was written about this subject ([EXTERNAL] etc.)
+     dashed red    = something WAS written, and what was written is
+                     "the published source is damaged at exactly this point".
+   It is not an error and it is not a pass. */
+.rc-stamp-inconclusive {
+  color: var(--stamp);
+  border-color: var(--stamp);
+  border-style: dashed;
+}
+
+.rc-plate-truncated {
+  border-color: var(--stamp);
+  border-style: dashed;
+}
+.rc-plate-truncated > .rc-plate-title {
+  color: var(--stamp);
+}
+
+/* -------------------------------------------------------------------------
+   The Row — signature element.
+   The actual CSV row as fetched, in Courier Prime, matched substring in stamp
+   red, caret rule directly beneath the matched bytes, typewriter style.
+   `white-space: pre` with horizontal scroll is deliberate: wrapping would
+   break caret registration, and caret registration is the whole point.
+   ------------------------------------------------------------------------- */
+
+.rc-row {
+  border-top: 1px solid var(--ink);
+  border-bottom: 1px solid var(--ink);
+  background: var(--paper);
+  padding: 16px 0;
+}
+
+.rc-row-scroll {
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 0 20px;
+  scrollbar-width: thin;
+}
+
+.rc-row-bytes {
+  margin: 0;
+  font-family: var(--font-courier-prime), ui-monospace, monospace;
+  font-size: 13px;
+  line-height: 20px;
+  white-space: pre;
+  tab-size: 4;
+}
+
+.rc-row-match {
+  color: var(--stamp);
+  font-weight: 700;
+}
+
+.rc-row-caret {
+  color: var(--stamp);
+}
+
+/* Where the authority's own 1,000-character Remarks limit severed the row. The
+   marker prints in stamp red because the damage is part of the adverse record,
+   and the caret rule beneath a severed value ends in `?` rather than `^`: the
+   caret can only claim the bytes that survived. */
+.rc-row-cut {
+  color: var(--stamp);
+  font-weight: 700;
+}
+
+.rc-row-cut-note {
+  display: block;
+  padding: 8px 20px 0;
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--stamp);
+}
+
+/* Verbatim: Courier Prime is reserved for text that was FETCHED. It is a
+   provenance signal, never decoration. Nothing the app itself wrote may use
+   this class. */
+.rc-verbatim {
+  font-family: var(--font-courier-prime), ui-monospace, monospace;
+  font-size: 13px;
+  line-height: 20px;
+}
+
+/* -------------------------------------------------------------------------
+   Source matrix — three states, each row naming its own file.
+   Never a spinner without a source name beside it.
+   ------------------------------------------------------------------------- */
+
+.rc-source-row {
+  display: grid;
+  grid-template-columns: 1.5rem 9rem 1fr;
+  gap: 12px;
+  align-items: baseline;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--rule);
+}
+@media (max-width: 640px) {
+  .rc-source-row {
+    grid-template-columns: 1.5rem 1fr;
+  }
+  .rc-source-row > :last-child {
+    grid-column: 2;
+  }
+}
+
+.rc-source-glyph {
+  font-family: var(--font-courier-prime), ui-monospace, monospace;
+  font-size: 13px;
+  line-height: 20px;
+  text-align: center;
+}
+
+.rc-pending-bar {
+  display: inline-block;
+  width: 1.25rem;
+  height: 2px;
+  background: var(--ink);
+  animation: rc-scan 1.1s ease-in-out infinite;
+  vertical-align: middle;
+}
+
+@keyframes rc-scan {
+  0%,
+  100% {
+    transform: scaleX(0.25);
+    transform-origin: left;
+  }
+  50% {
+    transform: scaleX(1);
+    transform-origin: left;
+  }
+}
+
+/* -------------------------------------------------------------------------
+   Controls. Zero radius throughout: this is form printing, not software
+   chrome. Blue is procedural, red is adverse, ink outline is neutral.
+   ------------------------------------------------------------------------- */
+
+.rc-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: 1px solid var(--ink);
+  background: transparent;
+  color: var(--ink);
+  padding: 9px 16px;
+  font-size: 13px;
+  line-height: 20px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  text-align: center;
+  transition: background-color 120ms linear, color 120ms linear;
+}
+.rc-btn:hover:not(:disabled) {
+  background: var(--ink);
+  color: var(--paper);
+}
+.rc-btn:disabled {
+  cursor: not-allowed;
+  border-style: dashed;
+  opacity: 0.55;
+}
+
+.rc-btn-process {
+  border-color: var(--process);
+  color: var(--process);
+}
+.rc-btn-process:hover:not(:disabled) {
+  background: var(--process);
+  color: var(--paper);
+}
+
+.rc-btn-stamp {
+  border-color: var(--stamp);
+  color: var(--stamp);
+}
+.rc-btn-stamp:hover:not(:disabled) {
+  background: var(--stamp);
+  color: var(--paper);
+}
+
+.rc-btn-filled {
+  background: var(--process);
+  border-color: var(--process);
+  color: var(--paper);
+}
+.rc-btn-filled:hover:not(:disabled) {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--paper);
+}
+
+/* Form inputs are ruled lines, the way a paper form is ruled. */
+.rc-input {
+  width: 100%;
+  border: 1px solid var(--rule);
+  border-bottom-color: var(--ink);
+  background: transparent;
+  color: var(--ink);
+  padding: 8px 10px;
+  font-size: 16px;
+  line-height: 26px;
+}
+.rc-input::placeholder {
+  color: var(--ink);
+  opacity: 0.45;
+}
+.rc-input:focus-visible {
+  border-color: var(--process);
+}
+.rc-input-verbatim {
+  font-family: var(--font-courier-prime), ui-monospace, monospace;
+  font-size: 13px;
+  line-height: 20px;
+  padding: 11px 10px;
+}
+.rc-input-invalid {
+  border-color: var(--stamp);
+  border-bottom-color: var(--stamp);
+}
+
+/* Enumerated grounds, printed as they would appear on a form: a ruled list of
+   boxes, not a styled radio pill. */
+.rc-choice {
+  display: block;
+  border: 1px solid var(--rule);
+  padding: 12px 14px;
+  cursor: pointer;
+}
+.rc-choice:hover {
+  border-color: var(--ink);
+}
+.rc-choice-selected {
+  border: 1px solid var(--process);
+  box-shadow: inset 3px 0 0 0 var(--process);
+}
+
+/* -------------------------------------------------------------------------
+   Lifecycle ruler — the six healthy stages, printed as ticks.
+   ------------------------------------------------------------------------- */
+
+.rc-ruler {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  gap: 3px;
+}
+
+.rc-tick {
+  height: 6px;
+  border: 1px solid var(--ink);
+}
+.rc-tick-done {
+  background: var(--ink);
+}
+.rc-tick-retry {
+  border-style: dashed;
+  background: transparent;
+}
+
+/* -------------------------------------------------------------------------
+   The transaction rail — a docket stub pinned to the foot of the page.
+   Local receipt book for writes this browser submitted; nothing authoritative
+   lives here, so it is allowed to be dismissed and rebuilt.
+   ------------------------------------------------------------------------- */
+
+.rc-rail {
+  position: sticky;
+  bottom: 0;
+  z-index: 20;
+  background: var(--paper);
+  border-top: 3px solid var(--ink);
+  box-shadow: 0 -1px 0 0 var(--paper), 0 -3px 0 0 var(--ink);
+}
+
+.rc-rail-scroll {
+  max-height: 40vh;
+  overflow-y: auto;
+}
+
+.rc-rail-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px 16px;
+  align-items: baseline;
+  padding: 10px 0;
+  border-top: 1px solid var(--rule);
+}
+@media (max-width: 640px) {
+  .rc-rail-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* -------------------------------------------------------------------------
+   Utility
+   ------------------------------------------------------------------------- */
+
+.rc-skip {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 100;
+  background: var(--ink);
+  color: var(--paper);
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 600;
+}
+.rc-skip:focus {
+  left: 16px;
+  top: 16px;
+}
+
+.rc-link {
+  color: var(--process);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+}
+.rc-link:hover {
+  text-decoration-thickness: 2px;
+}
+
+.rc-tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Every signature element in this system is a STRUCTURE — a row, a plate, a
+   caret, a ruler — so all of it reads static. Motion is only ever the strike. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .rc-pending-bar {
+    transform: scaleX(1);
+  }
+}
