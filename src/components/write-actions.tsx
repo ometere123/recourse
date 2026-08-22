@@ -187,8 +187,8 @@ export function WriteActions({
 
       {mode === "none" ? (
         <p className="text-13 m-0">
-          These calls need a wallet to sign them. Open <span className="font-semibold">Wallet</span>{" "}
-          in the masthead — a throwaway key works.
+          These calls need a wallet to sign them. Choose{" "}
+          <span className="font-semibold">Connect wallet</span> in the masthead.
         </p>
       ) : null}
 

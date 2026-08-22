@@ -180,8 +180,8 @@ function ReportForm() {
           </button>
           {mode === "none" ? (
             <p className="text-13 m-0">
-              This is a write, so it needs a wallet. Open{" "}
-              <span className="font-semibold">Wallet</span> in the masthead — a throwaway key works.
+              This is a write, so it needs a wallet. Choose{" "}
+              <span className="font-semibold">Connect wallet</span> in the masthead.
             </p>
           ) : null}
         </div>

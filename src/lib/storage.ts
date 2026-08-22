@@ -71,25 +71,15 @@ export function clearTransactions() {
 }
 
 /* ------------------------------------------------------------------------- *
- * Generated wallet
+ * Legacy generated wallet
  *
- * A throwaway key, held in localStorage, so the app can be explored without an
- * injected wallet. It is not a wallet product: `ack` records that the person was
- * told this key is disposable and unfunded.
+ * An earlier build offered a throwaway key held in localStorage. It is gone —
+ * an injected wallet is the only signer now — but removing the feature is not a
+ * reason to leave a plaintext private key behind in a browser that used it, so
+ * the provider purges both entries once on mount.
  * ------------------------------------------------------------------------- */
 
-export function loadGeneratedKey(): `0x${string}` | undefined {
-  const value = readJson<string | undefined>(WALLET_KEY, undefined);
-  return typeof value === "string" && value.startsWith("0x")
-    ? (value as `0x${string}`)
-    : undefined;
-}
-
-export function saveGeneratedKey(key: `0x${string}`) {
-  writeJson(WALLET_KEY, key);
-}
-
-export function clearGeneratedKey() {
+export function purgeLegacyGeneratedKey() {
   if (typeof window === "undefined") return;
   try {
     window.localStorage.removeItem(WALLET_KEY);
@@ -97,12 +87,4 @@ export function clearGeneratedKey() {
   } catch {
     /* see writeJson */
   }
-}
-
-export function loadAck(): boolean {
-  return readJson<boolean>(ACK_KEY, false) === true;
-}
-
-export function saveAck(value: boolean) {
-  writeJson(ACK_KEY, value);
 }

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState, type ReactNode } from "react";
+import type { ReactNode } from "react";
 import { WalletBar } from "./wallet-bar";
 import { TransactionRail } from "./transaction-rail";
 import { DATA_MODE } from "@/lib/data-source";
@@ -25,7 +25,6 @@ const NAV = [
 
 export function AppShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
-  const [walletOpen, setWalletOpen] = useState(false);
 
   return (
     <>
@@ -46,21 +45,8 @@ export function AppShell({ children }: { children: ReactNode }) {
                 Address screening with a determination you can appeal
               </p>
             </div>
-            <button
-              aria-expanded={walletOpen}
-              className="rc-btn"
-              onClick={() => setWalletOpen((value) => !value)}
-              type="button"
-            >
-              Wallet
-            </button>
+            <WalletBar />
           </div>
-
-          {walletOpen ? (
-            <div className="mt-6">
-              <WalletBar />
-            </div>
-          ) : null}
         </div>
 
         <div className="rc-sheet mt-6">

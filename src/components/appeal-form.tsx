@@ -292,8 +292,8 @@ export function AppealForm({ id }: { id: string }) {
             </button>
             {mode === "none" ? (
               <p className="text-13 m-0">
-                Filing is a write and needs a wallet. Open{" "}
-                <span className="font-semibold">Wallet</span> in the masthead.
+                Filing is a write and needs a wallet. Choose{" "}
+                <span className="font-semibold">Connect wallet</span> in the masthead.
               </p>
             ) : null}
           </div>
