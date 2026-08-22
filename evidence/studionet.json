@@ -1,9 +1,28 @@
 {
-  "$comment": "Machine-readable record of the StudioNet proof run. Every hash here is full and unabbreviated, and every stored value was read back from the deployed contract on 2026-08-21 rather than transcribed from a console. Re-read any of it with `genlayer call <contract> <method>`. What was NOT proven live is listed under notProvenOnChain and is not claimed anywhere else in this file.",
+  "$comment": "Machine-readable record of the StudioNet proof run. Every hash here is full and unabbreviated, and every stored value was read back from the deployed contract rather than transcribed from a console. Re-read any of it with `genlayer call <contract> <method>`. What was NOT proven live is listed under notProvenOnChain and is not claimed anywhere else in this file.",
   "network": "studionet",
   "endpoint": "https://studio.genlayer.com/api",
   "contract": "0xA73d81f1f7Cf772AC5976317eE12D259a67D48F7",
-  "recordedAt": "2026-08-21",
+  "recordedAt": "2026-08-22",
+  "firstRecordedAt": "2026-08-21",
+  "app": {
+    "url": "https://recourse-genlayer.vercel.app",
+    "host": "Vercel",
+    "deployedOn": "2026-08-22",
+    "wiring": "NEXT_PUBLIC_RECOURSE_CONTRACT is set to the contract above, so the deployed build reads the same StudioNet state recorded in this file rather than the on-disk fixture set.",
+    "routesVerified": [
+      "/",
+      "/check",
+      "/report",
+      "/docs",
+      "/determinations",
+      "/determinations/d1",
+      "/determinations/d2",
+      "/appeal/d1"
+    ],
+    "corsVerified": "https://studio.genlayer.com/api answers an OPTIONS preflight from Origin https://recourse-genlayer.vercel.app with access-control-allow-origin echoing that exact origin, so the browser's read path is not blocked from the deployed host.",
+    "serverSide": "None. There is no API route, server action, database, indexer, worker or cron -- reads and writes both go from the browser straight to the GenLayer RPC, and every time transition is a permissionless button."
+  },
   "signer": {
     "alias": "termsmet-studionet-submitter",
     "address": "0xB5EcD6dDa36B370aca4af5E2005d8E2Ae89c6db2",
@@ -18,9 +37,11 @@
     "parityProof": {
       "method": "genlayer code 0xA73d81f1f7Cf772AC5976317eE12D259a67D48F7",
       "retrievedOn": "2026-08-21",
+      "reconfirmedOn": "2026-08-22",
       "localBytes": 101872,
       "deployedBytes": 101872,
-      "sha256Equal": true
+      "sha256Equal": true,
+      "note": "Re-retrieved and re-hashed on 2026-08-22 after the ADDRESS lifecycle below. The contract was not redeployed at any point; both hashes still equal contractSha256."
     }
   },
   "provenLifecycle": {
@@ -38,15 +59,23 @@
         "consensusStatus": "FINALIZED",
         "genvmResult": "SUCCESS",
         "leaderReturn": "d1",
-        "validatorExecutions": { "success": 4, "error": 2 },
+        "validatorExecutions": {
+          "success": 4,
+          "error": 2
+        },
         "errorsWereFatal": false,
-        "votes": { "AGREE": 3, "IDLE": 2 }
+        "votes": {
+          "AGREE": 3,
+          "IDLE": 2
+        }
       },
       {
         "step": "screen",
         "hash": "0x2ed5c3d24bc8755aa8ef79a925f23311b65627432b768a5c4b7c53c2512a1523",
         "kind": "consensus write",
-        "args": ["d1"],
+        "args": [
+          "d1"
+        ],
         "consensusStatus": "FINALIZED",
         "genvmResult": "SUCCESS"
       },
@@ -59,6 +88,184 @@
       }
     ]
   },
+  "provenLifecycleAddress": {
+    "$comment": "The ADDRESS path, proven live on 2026-08-22. This closes the gap that the earlier revision listed under notProvenOnChain. Because an exact address match is deterministic and terminal, this single walk also proves the complete bond lifecycle -- taken on report, returned on settlement -- with a separate on-chain value transfer as independent evidence.",
+    "path": "ADDRESS",
+    "determinationId": "d2",
+    "subject": "0x0330070FD38Ec3bB94F58FA55D40368271E9e54A",
+    "subjectKind": "ADDRESS",
+    "basisUrl": "https://sanctionslistservice.ofac.treas.gov/api/download/sdn.csv",
+    "subjectProvenance": "Not invented. This is a genuine crypto address published in OFAC SDN record ent_num 57056 (AMNOKGANG TECHNOLOGY DEVELOPMENT COMPANY, program DPRK4) -- the same record the NAME walk above reached by a different route, so both paths converge on one real entity. It was selected from 76 exact matches found by running tests/prefilter/prefilter.py over the captured 5,647,099-byte SDN export, and its mixed-case 40-hex shape is exactly the shape that broke the stock CLI.",
+    "transactions": [
+      {
+        "step": "report",
+        "hash": "0x2bd4cf38c16eac159eec0fca9bf7cbed6dab03f22a245fe5757d3a5326b224ab",
+        "kind": "payable write",
+        "valueWei": "1000000000000000",
+        "valueCredited": true,
+        "consensusStatus": "FINALIZED",
+        "genvmResult": "SUCCESS",
+        "leaderReturn": "d2",
+        "validatorExecutions": {
+          "success": 4,
+          "error": 2
+        },
+        "errorsWereFatal": false,
+        "votes": {
+          "AGREE": 3,
+          "IDLE": 2
+        },
+        "submittedAt": "2026-08-22T00:28:25.778324Z"
+      },
+      {
+        "step": "screen",
+        "hash": "0x97019eb388279483cd47ddc8f9fc9a07293ed0420d3911f76dc4d11774e0e245",
+        "kind": "consensus write",
+        "args": [
+          "d2"
+        ],
+        "consensusStatus": "FINALIZED",
+        "genvmResult": "SUCCESS",
+        "validatorExecutions": {
+          "success": 4,
+          "error": 2
+        },
+        "errorsWereFatal": false,
+        "votes": {
+          "AGREE": 3,
+          "IDLE": 2
+        },
+        "submittedAt": "2026-08-22T00:31:08.392177Z"
+      },
+      {
+        "step": "bond returned to reporter",
+        "hash": "0x37c061a5edc7d50b4920223225310d6f14fa344fa06cf7c64795862e648da5b0",
+        "kind": "value transfer emitted by the contract",
+        "txType": 0,
+        "from": "0xA73d81f1f7Cf772AC5976317eE12D259a67D48F7",
+        "to": "0xB5EcD6dDa36B370aca4af5E2005d8E2Ae89c6db2",
+        "valueWei": "1000000000000000",
+        "consensusStatus": "FINALIZED",
+        "submittedAt": "2026-08-22T00:31:54.888630Z",
+        "note": "Not a call anyone made. `_settle` runs inside the same screen transaction as the LISTED verdict, and this is the resulting payout leaving the contract. It is the bond lifecycle as an independent on-chain fact rather than a `bond_settled: true` flag taken on trust. Re-list it with the sim_getTransactionsForAddress call under howToReproduce."
+      }
+    ],
+    "storedState": {
+      "$comment": "Read back with `genlayer call 0xA73d81f1f7Cf772AC5976317eE12D259a67D48F7 get_determination --args d2`.",
+      "id": "d2",
+      "status": "LISTED",
+      "match_kind": "EXACT",
+      "subject": "0x0330070FD38Ec3bB94F58FA55D40368271E9e54A",
+      "subject_norm": "0x0330070fd38ec3bb94f58fa55d40368271e9e54a",
+      "subject_kind": "ADDRESS",
+      "reporter": "0xB5EcD6dDa36B370aca4af5E2005d8E2Ae89c6db2",
+      "basis_url": "https://sanctionslistservice.ofac.treas.gov/api/download/sdn.csv",
+      "entry_ent_num": "57056",
+      "entry_name": "AMNOKGANG TECHNOLOGY DEVELOPMENT COMPANY",
+      "entry_program": "DPRK4",
+      "entry_symbol": "ETH",
+      "entry_prefix": "",
+      "verdict": "Address appears verbatim on the SDN list.",
+      "rationale": "",
+      "reason": "",
+      "source_len": "5647099",
+      "alias_count": "0",
+      "damaged_total": "13",
+      "un_corroborated": false,
+      "appealable": false,
+      "appeal_id": "",
+      "appeal_deadline": "",
+      "bond": "1000000000000000",
+      "bond_settled": true,
+      "created_at": "2026-08-22T00:28:25.778324Z",
+      "screened_at": "2026-08-22T00:31:08.392177Z"
+    },
+    "check": {
+      "args": [
+        "0x0330070FD38Ec3bB94F58FA55D40368271E9e54A"
+      ],
+      "result": "FLAGGED",
+      "status": "LISTED",
+      "determination_id": "d2",
+      "shape": "EVM",
+      "note": "Address appears verbatim on the SDN list.",
+      "reason": "",
+      "appealable": false,
+      "source_len": "5647099",
+      "unreadable_records": "13",
+      "subject_norm": "0x0330070fd38ec3bb94f58fa55d40368271e9e54a"
+    },
+    "fieldNotes": {
+      "verdict": "Unlike the ASSERTED path, an exact address hit needs no model, so `verdict` here is the contract's own deterministic sentence rather than a cited program code.",
+      "appealable": "Correctly false. LISTED means the address appears verbatim in the authority file, so there is no judgment to contest and the record is terminal.",
+      "bond_settled": "True, and settled inside the screen transaction rather than after a window. An exact match is not a judgment call, so holding the reporter's bond would serve no purpose.",
+      "alias_count": "0 on this path, against 4 on the NAME path. Aliases are only gathered where the identity question is comparative; an exact address hit does not need them.",
+      "subject_norm": "Lowercased by the contract. This is the field that proves the argument arrived as a real string: `subject.strip()` and normalisation ran, which is exactly what failed when the stock CLI turned the same 40-hex text into an Address object."
+    },
+    "howToReproduce": "curl -s -X POST https://studio.genlayer.com/api -H 'Content-Type: application/json' -d '{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"sim_getTransactionsForAddress\",\"params\":[\"0xA73d81f1f7Cf772AC5976317eE12D259a67D48F7\"]}'",
+    "reverifiedViaFrontendPath": {
+      "$comment": "The whole point of the ADDRESS gap was that the stock CLI mangled the argument. So the finished record was re-checked a second time through genlayer-js itself -- the library the browser runs -- rather than only through the CLI bridge that submitted it.",
+      "command": "NEXT_PUBLIC_RECOURSE_CONTRACT=0xA73d81f1f7Cf772AC5976317eE12D259a67D48F7 node scripts/exercise-studionet.mjs 0x2bd4cf38c16eac159eec0fca9bf7cbed6dab03f22a245fe5757d3a5326b224ab 0x97019eb388279483cd47ddc8f9fc9a07293ed0420d3911f76dc4d11774e0e245 d2 0x0330070FD38Ec3bB94F58FA55D40368271E9e54A 0xb5ecd6dda36b370aca4af5e2005d8e2ae89c6db2",
+      "ranOn": "2026-08-22",
+      "exitCode": 0,
+      "whatItAsserted": "Both transactions FINALIZED with GenVM SUCCESS; get_determination('d2') read back with a matching id, subject, reporter and 1000000000000000-wei bond; check('0x0330070FD38Ec3bB94F58FA55D40368271E9e54A') pointing at d2; and status no longer PENDING. The script fails the process on any mismatch, so exit 0 is the assertion.",
+      "whyItMatters": "The 40-hex subject was passed to client.readContract as a plain JS string and came back matching, which is the same encoding path src/app/report/page.tsx uses. genlayer-js never had the coercion bug -- only the CLI's parseScalar did -- and this is that stated directly rather than argued."
+    }
+  },
+  "bondLifecycle": {
+    "$comment": "Both halves of the escrow mechanism are now visible on chain at once, on two determinations that took opposite branches.",
+    "held": {
+      "determinationId": "d1",
+      "status": "ASSERTED",
+      "bondSettled": false,
+      "why": "A judgment-based finding keeps the reporter's bond escrowed until the appeal window closes on 2026-08-28T14:03:52Z or an appeal resolves."
+    },
+    "returned": {
+      "determinationId": "d2",
+      "status": "LISTED",
+      "bondSettled": true,
+      "payoutTransaction": "0x37c061a5edc7d50b4920223225310d6f14fa344fa06cf7c64795862e648da5b0",
+      "why": "A deterministic exact match settles immediately, and the payout is a distinct finalized transaction."
+    }
+  },
+  "timeGateProof": {
+    "$comment": "The permissionless expiry button exists and is time-gated. The gate itself was exercised live; the settlement behind it cannot be exercised until the window actually closes, and that is stated rather than worked around.",
+    "method": "expire_appeal_window",
+    "args": [
+      "d1"
+    ],
+    "hash": "0xf74bb15b661661113fe153754d857ec41c36739e4eddca6a068b680aa1504431",
+    "valueWei": "0",
+    "genvmResult": "rollback",
+    "revertMessage": "[EXPECTED] The appeal window for d1 is open until 2026-08-28T14:03:52Z",
+    "sideEffects": "none",
+    "sideEffectsVerified": "d1 re-read afterwards: status still ASSERTED, bond_settled still false, appeal_id still empty.",
+    "whatThisProves": "Anyone can press the button -- no operator role is required -- and the contract refuses early settlement with the deadline named in the error.",
+    "whatThisDoesNotProve": "The successful expiry-settlement branch. `d1` was reported on 2026-08-21 with a 604800-second window, so the earliest a real expiry can run is 2026-08-28T14:03:52Z. This record was frozen on 2026-08-22, six days short. The branch is covered by direct tests only, and the returned half of the bond lifecycle is instead proven live by `d2` above."
+  },
+  "stockCliValueZeroControl": {
+    "$comment": "The cleanest available demonstration that consensus status is not application success, and the Recourse counterpart of the control recorded in the Intent Guard evidence file.",
+    "hash": "0xd7d2bc3f00736650005efd96b5288fdc282dd6a17fc321b2a7b091f727895b15",
+    "method": "report",
+    "valueWei": "0",
+    "consensusStatus": "FINALIZED",
+    "genvmResult": "rollback",
+    "validatorExecutions": {
+      "success": 0,
+      "error": 6
+    },
+    "storedAnything": false,
+    "strandedAnything": false,
+    "why": "Submitted through the unpatched `genlayer write`, which hardcodes `value: 0n`. The bond never arrived, so the contract refused the call before doing any work. Nothing was stored and -- unlike the ADDRESS attempt recorded under strandedValue -- nothing was stranded, because nothing was transferred."
+  },
+  "submissionTooling": {
+    "$comment": "How the two payable writes and the typed ADDRESS arguments were submitted, stated precisely so a reviewer can judge the claim rather than take it.",
+    "whatGenlayerJsReceived": "For `d2`: the three arguments [\"0x0330070FD38Ec3bB94F58FA55D40368271E9e54A\", \"ADDRESS\", \"https://sanctionslistservice.ofac.treas.gov/api/download/sdn.csv\"] as plain JS strings, plus value 1000000000000000n. That is the identical tuple src/app/report/page.tsx builds at its `args:` line, so the encoding path is the browser's.",
+    "howItDiffersFromTheBrowser": "Only in where the signature comes from: the OS keychain that `genlayer account unlock` populates, instead of a wallet extension. Argument construction, encoding and the `client.writeContract` call are the same.",
+    "howItDiffersFromTheStockCli": "It does not route arguments through `parseScalar`, which is the single reason the earlier ADDRESS attempt failed.",
+    "signing": "Unchanged. The submission reuses the CLI's own WriteAction -> BaseAction -> getClient path. No key was read, decrypted, exported or logged; no wallet or keystore was created; no password was supplied.",
+    "location": "A separate local clone of genlayer-cli at tag v0.39.2. It is not part of this repository and no contract change was needed for any of it."
+  },
   "liveSourceProof": {
     "$comment": "The single most load-bearing number in this repository. It answers whether a multi-megabyte authority file can actually be fetched and scanned inside a GenLayer consensus round, which is the product's central risk.",
     "url": "https://sanctionslistservice.ofac.treas.gov/api/download/sdn.csv",
@@ -68,10 +275,12 @@
     "corroboratedBy": [
       "0xfcd3f63cd188fb9697c78b5751e259c7464db82bee04a7a2a0f896423e452aad",
       "0x2ed5c3d24bc8755aa8ef79a925f23311b65627432b768a5c4b7c53c2512a1523",
-      "0xb93fcf39310baf4e16be5798c59f67a02eb169f239cc597804b73caddb9442ab"
+      "0xb93fcf39310baf4e16be5798c59f67a02eb169f239cc597804b73caddb9442ab",
+      "0x2bd4cf38c16eac159eec0fca9bf7cbed6dab03f22a245fe5757d3a5326b224ab",
+      "0x97019eb388279483cd47ddc8f9fc9a07293ed0420d3911f76dc4d11774e0e245"
     ],
     "blockerFound": false,
-    "note": "No size, runtime, fetch-limit or validator constraint was hit. 5,647,099 bytes is byte-exact against tests/prefilter fixtures, and three independent finalized transactions report the same length."
+    "note": "No size, runtime, fetch-limit or validator constraint was hit. 5,647,099 bytes is byte-exact against tests/prefilter fixtures, and five independent finalized transactions across two determinations and both subject paths report the same length -- including two sent a day apart, so the figure is not a single lucky fetch."
   },
   "storedState": {
     "get_determination": {
@@ -105,7 +314,9 @@
       "entry_ent_num": "57056 was re-checked by the contract against the arithmetic candidate set before storage, so the identity round could not name a record outside the evidence it was shown."
     },
     "check": {
-      "args": ["AMNOKGANG TECHNOLOGY DEVELOPMENT COMPANY"],
+      "args": [
+        "AMNOKGANG TECHNOLOGY DEVELOPMENT COMPANY"
+      ],
       "result": "FLAGGED",
       "status": "ASSERTED",
       "determination_id": "d1",
@@ -126,7 +337,8 @@
       "observed_at": "2026-08-21T14:11:19.481662Z"
     },
     "stats": {
-      "determinations": "1",
+      "$comment": "Re-read on 2026-08-22, after the ADDRESS lifecycle.",
+      "determinations": "2",
       "appeals": "0",
       "balance": "2000000000000000",
       "bounty_pool": "0",
@@ -135,6 +347,12 @@
       "appeal_window_seconds": "604800",
       "rescreen_cooldown_seconds": "86400"
     }
+  },
+  "verifierFix": {
+    "$comment": "One genuine defect found in scripts/exercise-studionet.mjs while re-running the documented commands on 2026-08-22. It is in the verifier, not the contract; no contract change was needed and none was made. `verify:studionet` is not part of the `npm run verify` chain, which is why CI never surfaced it.",
+    "defect": "The script read NEXT_PUBLIC_RECOURSE_CONTRACT straight from process.env with no .env.local loader, while its sibling scripts/verify-schema.mjs in the same directory already had one. The two commands documented in README.md therefore threw `NEXT_PUBLIC_RECOURSE_CONTRACT is not set` and exited 1 before opening a socket; they only worked in a shell that had exported the address by hand.",
+    "fix": "Copied the sibling script's ten-line .env.local loader in verbatim rather than adding a dependency.",
+    "consequence": "Both documented commands — d1 NAME and d2 ADDRESS — now exit 0 exactly as written, with no environment variable exported. Intent Guard's scripts/exercise-studionet.mjs had the identical gap and was fixed the same way."
   },
   "strandedValue": {
     "amountWei": "1000000000000000",
@@ -146,7 +364,7 @@
     "attemptedPath": "ADDRESS",
     "cause": "GenLayer CLI 0.39.2 `parseScalar` (src/commands/contracts/index.ts) coerces any argument matching ^0x[0-9a-fA-F]{40}$ into a CalldataAddress. `report` declares `subject: str`, so it received an Address object and `subject.strip()` raised AttributeError. There is no CLI escape hatch: parseArg's JSON branch routes through coerceValue -> parseScalar as well.",
     "whyNotRefunded": "StudioNet does not roll back `gl.message.value` when the GenVM reverts. A `raise gl.vm.UserError` is not an EVM revert, so the bond had already moved and stayed in the contract.",
-    "howToVerify": "`stats.balance` is 2000000000000000 wei while the only determination holds a 1000000000000000 wei escrowed bond. The 0.001 GEN difference is this stranded transfer.",
+    "howToVerify": "Arithmetic on `stats`, re-derived on 2026-08-22 now that two determinations exist. `balance` is 2000000000000000 wei against 2 determinations. Of those, only `d1` still escrows a bond (1000000000000000 wei, ASSERTED, bond_settled false); `d2` took a bond in and paid it straight back out (LISTED, bond_settled true, payout transaction 0x37c061a5edc7d50b4920223225310d6f14fa344fa06cf7c64795862e648da5b0), so it contributes nothing to the balance. 2000000000000000 - 1000000000000000 held = 1000000000000000 unaccounted for, and that is this stranded transfer. The figure being unchanged across a second full lifecycle is itself the check: a settlement that had silently failed to pay out would have left the balance at 3000000000000000.",
     "recoverable": false,
     "recoverableWhy": "The contract has no sweep or admin-withdraw path, which is deliberate -- an owner who can move escrowed bonds is a worse problem than a stranded 0.001 GEN of simulated network value. The amount is recorded here rather than written off silently.",
     "contractDefect": false,
@@ -156,14 +374,17 @@
     "provider": "GitHub Actions",
     "runId": "32508769044",
     "commit": "66d943d229c394bd227862976887ec5d39d057e6",
-    "os": ["ubuntu-latest", "windows-latest"],
+    "os": [
+      "ubuntu-latest",
+      "windows-latest"
+    ],
     "conclusion": "success",
     "npmCiAudit": "found 0 vulnerabilities",
     "note": "CI runs on every push, so commits after the one named here have their own runs. This run is recorded because its npm ci steps are the first to report 0 vulnerabilities in place of the 3 high-severity findings, on both operating systems."
   },
   "notProvenOnChain": [
-    "The ADDRESS path. The only live attempt failed for the CLI-coercion reason recorded under strandedValue, so no live ADDRESS determination exists and none is claimed. The path is covered by direct tests against the production screen() code.",
-    "The appeal lifecycle. `d1` is appealable and its window is open until 2026-08-28T14:03:52Z, but no appeal was filed and no live adjudication occurred. All three appeal dispositions are covered by direct tests only.",
-    "A public application URL. None is recorded in this repository."
+    "The appeal lifecycle. `d1` is appealable and its window is open until 2026-08-28T14:03:52Z, but no appeal was filed and no live adjudication occurred. This was a deliberate choice, not an oversight: `d1`'s subject is a genuinely OFAC-listed DPRK entity, so there is no honest evidence with which to contest the finding, and filing an appeal on invented grounds would have manufactured the proof rather than earned it. All three appeal dispositions, the settlement latches and the no-double-settlement guard are covered by direct tests against the production code paths.",
+    "The successful expiry-settlement branch of `expire_appeal_window`. Only its time gate could be exercised on 2026-08-22 -- see timeGateProof, which records the live refusal and the six-day gap. The returned half of the bond lifecycle is instead proven live by `d2`.",
+    "A `MATCH_TRUNCATED_PREFIX` -> INCONCLUSIVE outcome. The captured authority file contains no address that truncates into a colliding prefix, so this branch cannot be triggered from real data and is covered by direct tests only."
   ]
 }

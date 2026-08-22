@@ -1,5 +1,15 @@
 import { createAccount, createClient } from "genlayer-js";
 import { studionet } from "genlayer-js/chains";
+import { existsSync, readFileSync } from "node:fs";
+
+if (existsSync(".env.local")) {
+  for (const line of readFileSync(".env.local", "utf8").split(/\r?\n/)) {
+    const trimmed = line.trim();
+    if (!trimmed || trimmed.startsWith("#") || !trimmed.includes("=")) continue;
+    const [key, ...value] = trimmed.split("=");
+    process.env[key] ??= value.join("=");
+  }
+}
 
 const MIN_REPORT_BOND_WEI = 1_000_000_000_000_000n;
 const RPC_GAP_MS = 4_500; // At most 13 requests/minute, below the submission limit.
