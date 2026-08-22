@@ -88,7 +88,7 @@ Determination `d2` — subject `0x0330070FD38Ec3bB94F58FA55D40368271E9e54A`, kin
 | Source binding | SHA-256 `d21cbe18a55c51385c0b68c56d0b4127c8ba0fbbf7618ec07bba47e9a15f60a1` |
 | Deployed-source parity | PASS: `genlayer code` retrieval on 2026-08-21, re-confirmed 2026-08-22; 101,872 bytes both sides; SHA-256 equal; never redeployed |
 | Fixture binary integrity | PASS locally: SDN 5,647,099 B / `369c3a…c6b`; ALT 1,063,617 B / `c00af6…2bc`; UN 2,176,185 B / `0f0ac1…ced` |
-| Cross-platform fixture CI | PASS: GitHub Actions run `32508769044` on commit `66d943d229c394bd227862976887ec5d39d057e6`, `ubuntu-latest` + `windows-latest`, conclusion `success`; both `npm ci` steps report `found 0 vulnerabilities`. CI runs on every push, so later commits have their own runs. |
+| Cross-platform fixture CI | PASS: GitHub Actions run `32548072114` on commit `866cb070fba125834074cfa1d35a30a3d5e084c8` — the commit carrying the `d2` ADDRESS determination, the bond payout and `evidence/studionet.json` — jobs `linux` and `fixture-windows`, `ubuntu-latest` + `windows-latest`, conclusion `success`. The earlier run `32508769044` on commit `66d943d229c394bd227862976887ec5d39d057e6` is recorded separately in the evidence file because its `npm ci` steps are the first to report `found 0 vulnerabilities` on both platforms. CI runs on every push, so the commit that added this row has a later run of its own; the release tag points at that one. |
 | Schema | PASS, 16 required methods via GenLayer CLI |
 | Prefilter textual parity | PASS, 582 lines / 11 functions / 23,679 bytes |
 | Embedded behavioral corpus | PASS, 52 run / 0 failures / 0 errors / 0 skipped |

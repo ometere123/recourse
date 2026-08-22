@@ -372,15 +372,29 @@
   },
   "ci": {
     "provider": "GitHub Actions",
-    "runId": "32508769044",
-    "commit": "66d943d229c394bd227862976887ec5d39d057e6",
+    "workflow": "verify",
+    "jobs": [
+      "linux",
+      "fixture-windows"
+    ],
     "os": [
       "ubuntu-latest",
       "windows-latest"
     ],
-    "conclusion": "success",
-    "npmCiAudit": "found 0 vulnerabilities",
-    "note": "CI runs on every push, so commits after the one named here have their own runs. This run is recorded because its npm ci steps are the first to report 0 vulnerabilities in place of the 3 high-severity findings, on both operating systems."
+    "releaseRun": {
+      "runId": "32548072114",
+      "commit": "866cb070fba125834074cfa1d35a30a3d5e084c8",
+      "conclusion": "success",
+      "note": "The run over the commit that introduced the d2 ADDRESS determination, the bond payout, the verifier fix and this evidence file. Green on 2026-08-22 on both operating systems."
+    },
+    "auditMilestoneRun": {
+      "runId": "32508769044",
+      "commit": "66d943d229c394bd227862976887ec5d39d057e6",
+      "conclusion": "success",
+      "npmCiAudit": "found 0 vulnerabilities",
+      "note": "Recorded separately because its npm ci steps are the first to report 0 vulnerabilities in place of the 3 high-severity findings, on both operating systems."
+    },
+    "note": "CI runs on every push. The commit that adds this block is therefore validated by a later run than the releaseRun named here; that later run is the one the release tag points at. Both are stated rather than collapsing them into a single unfalsifiable claim."
   },
   "notProvenOnChain": [
     "The appeal lifecycle. `d1` is appealable and its window is open until 2026-08-28T14:03:52Z, but no appeal was filed and no live adjudication occurred. This was a deliberate choice, not an oversight: `d1`'s subject is a genuinely OFAC-listed DPRK entity, so there is no honest evidence with which to contest the finding, and filing an appeal on invented grounds would have manufactured the proof rather than earned it. All three appeal dispositions, the settlement latches and the no-double-settlement guard are covered by direct tests against the production code paths.",
