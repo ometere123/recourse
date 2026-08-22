@@ -27,23 +27,23 @@ export default function DocsPage() {
         <Table
           head={["State", "Reached by", "Appealable"]}
           rows={[
-            ["PENDING", "report() — bonded, not yet screened", "n/a"],
-            ["LISTED", "byte equality with a published row", "No — nothing to overturn"],
+            ["PENDING", "report(), bonded but not yet screened", "n/a"],
+            ["LISTED", "byte equality with a published row", "No, nothing to overturn"],
             [
               "NOT_LISTED",
               "the deterministic scan extracted zero candidates",
-              "No — no adverse finding",
+              "No, there is no adverse finding",
             ],
             [
               "INCONCLUSIVE",
               "prefix equality with a row the authority truncated",
-              "No — rescreen instead",
+              "No, rescreen instead",
             ],
             ["ASSERTED", "validators judged the subject to be the same party", "Yes"],
             ["UNDER_APPEAL", "a bonded appeal is awaiting adjudication", "In progress"],
-            ["UPHELD", "the appeal failed against the stated basis", "No — terminal"],
-            ["CONTESTED", "the appeal round could not agree", "No — terminal"],
-            ["OVERTURNED", "the appeal succeeded", "No — terminal"],
+            ["UPHELD", "the appeal failed against the stated basis", "No, terminal"],
+            ["CONTESTED", "the appeal round could not agree", "No, terminal"],
+            ["OVERTURNED", "the appeal succeeded", "No, terminal"],
           ]}
         />
       </section>
@@ -74,7 +74,7 @@ export default function DocsPage() {
         />
         <p className="text-13 m-0">
           A subject nobody has reported has no determination at all. That is not CLEAR, and{" "}
-          <span className="rc-verbatim">check()</span> does not pretend otherwise — the read returns
+          <span className="rc-verbatim">check()</span> does not pretend otherwise: the read returns
           no record and this site says so in those words.
         </p>
       </section>
@@ -85,11 +85,11 @@ export default function DocsPage() {
           head={["Call", "Who", "Cost"]}
           rows={[
             ["report(subject, kind, basis, url)", "anyone", "report bond"],
-            ["screen(id)", "anyone — permissionless", "gas only"],
-            ["rescreen(id)", "anyone — permissionless", "gas only"],
+            ["screen(id)", "anyone, permissionless", "gas only"],
+            ["rescreen(id)", "anyone, permissionless", "gas only"],
             ["appeal(id, evidence_url, grounds)", "anyone", "appeal bond"],
-            ["adjudicate_appeal(appeal_id)", "anyone — permissionless", "gas only"],
-            ["expire_appeal_window(id)", "anyone — permissionless", "gas only"],
+            ["adjudicate_appeal(appeal_id)", "anyone, permissionless", "gas only"],
+            ["expire_appeal_window(id)", "anyone, permissionless", "gas only"],
             ["check(subject) · get_determination(id) · get_appeal(id)", "anyone", "free read"],
             ["list_determinations(offset, limit) · get_source_health()", "anyone", "free read"],
           ]}
@@ -100,8 +100,7 @@ export default function DocsPage() {
           running is not a public register. The consequence is visible on the{" "}
           <Link className="rc-link" href="/determinations">
             register
-          </Link>{" "}
-          — records sit there waiting until somebody presses the button.
+          </Link>, where records sit waiting until somebody presses the button.
         </p>
       </section>
 
@@ -111,10 +110,10 @@ export default function DocsPage() {
           head={["Outcome", "Reporter's bond", "Appellant's bond"]}
           rows={[
             ["LISTED · ASSERTED stands", "returned", "to the reporter"],
-            ["NOT_LISTED", "slashed to the bounty pool", "—"],
+            ["NOT_LISTED", "slashed to the bounty pool", "n/a"],
             ["OVERTURNED", "to the appellant", "returned"],
             ["CONTESTED", "returned", "returned"],
-            ["INCONCLUSIVE", "returned", "—"],
+            ["INCONCLUSIVE", "returned", "n/a"],
           ]}
         />
         <p className="text-13 m-0">
@@ -137,7 +136,7 @@ export default function DocsPage() {
             the bytes.
           </li>
           <li className="mb-2">
-            Normalise the subject — lowercase hex for addresses, case-folded and whitespace-collapsed
+            Normalise the subject: lowercase hex for addresses, case-folded and whitespace-collapsed
             for names.
           </li>
           <li className="mb-2">
@@ -192,9 +191,10 @@ export default function DocsPage() {
             <span className="rc-tabular font-semibold">
               {DAMAGED_RECORD_COUNT} records in the current file
             </span>{" "}
-            are damaged this way. Nobody — not this contract, not a commercial screening service
-            reading the same file — can match those addresses in full from this source. Where a
-            subject matches only the surviving prefix, the determination is INCONCLUSIVE and says so.
+            are damaged this way. No reader can match those addresses in full from this source,
+            and that includes both this contract and every commercial screening service consulting
+            the same file. Where a subject matches only the surviving prefix, the determination is
+            INCONCLUSIVE and says so.
           </p>
         </div>
         <ul className="m-0 text-13 pl-6">
@@ -208,7 +208,7 @@ export default function DocsPage() {
           </li>
           <li className="mb-2">
             It is not legal advice and not a compliance programme. A determination here is a public,
-            contestable record — not a licence to transact.
+            contestable record, not a licence to transact.
           </li>
           <li className="mb-2">
             A determination is true of the file on the date that file states. Lists change; that is

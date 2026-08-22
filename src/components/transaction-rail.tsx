@@ -50,7 +50,7 @@ export function TransactionRail() {
               <div className="rc-rail-row" key={tx.hash}>
                 <div className="rc-flow-tight">
                   <p className="m-0 text-13">
-                    <span className="rc-verbatim">{tx.functionName}()</span> — {tx.label}
+                    <span className="rc-verbatim">{tx.functionName}()</span> · {tx.label}
                     {tx.subjectId ? (
                       <>
                         {" · "}
@@ -80,7 +80,7 @@ export function TransactionRail() {
                   {tx.status === "FINALIZED" && tx.executionResult !== "SUCCESS" ? (
                     <p className="m-0 text-12 text-stamp">
                       Finalized rollback: GenVM {tx.executionResult ?? "result unavailable"}
-                      {tx.executionError ? ` — ${tx.executionError}` : ""}. No successful state
+                      {tx.executionError ? ` (${tx.executionError})` : ""}. No successful state
                       transition is claimed.
                     </p>
                   ) : null}

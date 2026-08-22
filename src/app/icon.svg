@@ -1,0 +1,22 @@
+<!--
+  Two plates, out of register. The stamp-red field is the determination, laid down
+  solid the way a stamp lays down ink. The process-blue frame is the appeal:
+  offset, smaller, and still an outline because it is a claim and not yet ink.
+  Where it crosses the determination it cuts into it. Blue on red is very nearly
+  no contrast at all, so the blue frame prints over a paper-coloured knockout,
+  which is how a two-colour form is actually made.
+
+  Exactly two inks plus paper, the same rule the stylesheet holds itself to.
+
+  Every edge is even and every stroke halves cleanly, so the figure lands on whole
+  pixels at 16px instead of antialiasing into mush.
+
+  Hex is literal rather than var(): a file served as a static asset has no access
+  to the app's stylesheet.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <rect width="32" height="32" fill="#fafaf8" />
+  <rect x="4" y="4" width="14" height="14" fill="#b02418" />
+  <rect x="16" y="16" width="12" height="12" fill="none" stroke="#fafaf8" stroke-width="8" />
+  <rect x="16" y="16" width="12" height="12" fill="none" stroke="#1f4fa8" stroke-width="4" />
+</svg>

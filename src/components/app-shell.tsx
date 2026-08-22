@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
 import { WalletBar } from "./wallet-bar";
+import { Logo } from "./logo";
 import { TransactionRail } from "./transaction-rail";
 import { DATA_MODE } from "@/lib/data-source";
 import { CONTRACT_ADDRESS, explorerAddressUrl } from "@/lib/genlayer/config";
@@ -36,7 +37,8 @@ export function AppShell({ children }: { children: ReactNode }) {
         <div className="rc-sheet pt-8">
           <div className="flex flex-wrap items-end justify-between gap-x-8 gap-y-4">
             <div>
-              <Link className="no-underline" href="/">
+              <Link className="no-underline flex items-center gap-3" href="/">
+                <Logo />
                 <span className="font-display text-34 font-semibold block leading-none">
                   Recourse
                 </span>
@@ -104,7 +106,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                   </a>
                 </>
               ) : (
-                "No contract configured — fixture mode."
+                "No contract configured. Fixture mode."
               )}
             </p>
             <p className="text-12 m-0">

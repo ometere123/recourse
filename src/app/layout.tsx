@@ -17,12 +17,11 @@ import { AppShell } from "@/components/app-shell";
  */
 export const metadata: Metadata = {
   title: {
-    default: "Recourse — address screening you can appeal",
+    default: "Recourse: address screening you can appeal",
     template: "%s · Recourse",
   },
   description:
     "Screen an address or entity against published sanctions lists, inspect the matched designation fields, and appeal a judgment that got it wrong.",
-  icons: { icon: "/favicon.svg" },
 };
 
 export const viewport: Viewport = {

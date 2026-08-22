@@ -52,7 +52,7 @@ export function WriteActions({
         detail:
           source.list === "OFAC_ALT" && d.subject_kind === "ADDRESS"
             ? "alias file holds names only; an address cannot appear in it"
-            : `${source.authority} — fetched by every validator independently`,
+            : `${source.authority}, fetched by every validator independently`,
       })),
     [d.subject_kind],
   );
@@ -112,8 +112,7 @@ export function WriteActions({
               <span className="rc-tabular">{displayTime(d.appeal_deadline)}</span>
               {remaining ? (
                 <>
-                  {" "}
-                  — <span className="font-semibold">{remaining} left</span>
+                  , <span className="font-semibold">{remaining} left</span>
                 </>
               ) : null}
               .

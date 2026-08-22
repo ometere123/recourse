@@ -216,7 +216,7 @@ export function AppealForm({ id }: { id: string }) {
         <form className="rc-flow" onSubmit={onSubmit} noValidate>
           <p className="text-13 m-0">
             Open until <span className="rc-tabular">{displayTime(determination.appeal_deadline)}</span>
-            {remaining ? <> — {remaining} left</> : null}.
+            {remaining ? <>, {remaining} left</> : null}.
           </p>
 
           <fieldset className="border-0 m-0 p-0">
@@ -242,7 +242,7 @@ export function AppealForm({ id }: { id: string }) {
             </div>
             <p className="text-12 mt-3 mb-0">
               One ground, chosen deliberately. The validators are asked whether your evidence
-              defeats <span className="font-semibold">this</span> ground — not whether the
+              defeats <span className="font-semibold">this</span> ground, not whether the
               determination feels unfair.
             </p>
           </fieldset>
@@ -379,7 +379,7 @@ function NotAppealable({
         A determination is appealable only while it is ASSERTED and inside its window. This one is{" "}
         {d.status.replace(/_/g, " ")}.{" "}
         {d.status === "INCONCLUSIVE"
-          ? "Nothing was asserted about the subject, so there is no finding to contest — a rescreen is the remedy."
+          ? "Nothing was asserted about the subject, so there is no finding to contest. A rescreen is the remedy."
           : null}
       </p>
     </div>

@@ -97,8 +97,8 @@ function ReportForm() {
         <h1 className="font-display text-34 font-semibold m-0">Report a subject</h1>
         <p className="m-0">
           Reporting puts a subject on the register and bonds your claim that it appears in a
-          published sanctions list. Screening it is a separate, permissionless call — so a report
-          does not decide anything, it only pays for the question to be asked.
+          published sanctions list. Screening it is a separate, permissionless call, so a report
+          does not decide anything. It only pays for the question to be asked.
         </p>
       </header>
 
@@ -168,7 +168,7 @@ function ReportForm() {
           />
           <p className="text-12 m-0">
             Staked against your claim. If the screen finds the subject, the bond returns to you. If
-            it finds nothing, the bond is slashed to the bounty pool — that cost is what keeps this
+            it finds nothing, the bond is slashed to the bounty pool. That cost is what keeps this
             register from being a place to smear an address for free. The contract enforces its own
             minimum and will refuse a bond below it.
           </p>

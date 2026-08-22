@@ -40,14 +40,14 @@ const LIST_LABEL: Record<MatchedList, string> = {
   OFAC_SDN: "SDN.CSV",
   OFAC_ALT: "ALT.CSV",
   UN_CONSOLIDATED: "consolidated.xml",
-  NONE: "—",
+  NONE: "none",
 };
 
 const AUTHORITY: Record<MatchedList, string> = {
   OFAC_SDN: "US Treasury, Office of Foreign Assets Control",
   OFAC_ALT: "US Treasury, Office of Foreign Assets Control",
   UN_CONSOLIDATED: "United Nations Security Council",
-  NONE: "—",
+  NONE: "none",
 };
 
 /** Case-insensitive, because the contract's scan normalises case before comparing. */
@@ -156,11 +156,11 @@ export function ProvenanceRail({ provenance }: Pick<RowProps, "provenance">) {
       </Fact>
       <Fact term="Published">
         <span className="rc-tabular">{generated ? displayDate(generated) : "not stored"}</span>
-        {generated ? <span className="text-13"> — the date the file states for itself</span> : null}
+        {generated ? <span className="text-13"> (the date the file states for itself)</span> : null}
       </Fact>
       <Fact term="Fetched">
         <span className="rc-tabular">{displayTime(fetchedAt)}</span>
-        <span className="text-13"> — inside consensus, by every validator</span>
+        <span className="text-13"> (inside consensus, by every validator)</span>
       </Fact>
     </dl>
   );

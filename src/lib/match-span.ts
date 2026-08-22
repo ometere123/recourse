@@ -30,14 +30,14 @@ export function markedSpanFor(d: Determination): MarkedSpan | undefined {
     return {
       highlight: d.subject,
       matchLabel:
-        "exact match — the subject appears byte-for-byte at this offset in the published row",
+        "exact match. The subject appears byte-for-byte at this offset in the published row",
     };
   }
 
   if (d.status === "INCONCLUSIVE" && d.surviving_prefix_len > 0) {
     return {
       highlight: d.subject.slice(0, d.surviving_prefix_len),
-      matchLabel: `surviving prefix — all ${d.surviving_prefix_len} published characters match, and the rest of the value was cut off by the authority, not by this contract`,
+      matchLabel: `surviving prefix. All ${d.surviving_prefix_len} published characters match, and the rest of the value was cut off by the authority, not by this contract`,
       cut: { survivingLen: d.surviving_prefix_len, totalLen: d.subject.length },
     };
   }
@@ -48,7 +48,7 @@ export function markedSpanFor(d: Determination): MarkedSpan | undefined {
   return {
     highlight: candidate,
     matchLabel:
-      "candidate field — not byte-equal to the subject. Validators judged this field to denote the same party, and that judgment is what an appeal contests",
+      "candidate field. Not byte-equal to the subject. Validators judged this field to denote the same party, and that judgment is what an appeal contests",
   };
 }
 

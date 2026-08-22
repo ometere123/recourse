@@ -14,12 +14,12 @@ const ONE = 10n ** DECIMALS;
 
 /** `"250000000000000000000"` → `"250"`. Trailing zeros trimmed, up to 4 places. */
 export function formatGen(wei: U256String | bigint | undefined, places = 4): string {
-  if (wei === undefined || wei === "") return "—";
+  if (wei === undefined || wei === "") return "n/a";
   let value: bigint;
   try {
     value = typeof wei === "bigint" ? wei : BigInt(wei);
   } catch {
-    return "—";
+    return "n/a";
   }
   const negative = value < 0n;
   if (negative) value = -value;
@@ -106,7 +106,7 @@ const MONTHS = [
 
 /** `2026-08-19T14:02:11` → `19 Aug 2026 · 14:02 UTC`. */
 export function displayTime(value: string): string {
-  if (!value) return "—";
+  if (!value) return "not recorded";
   const ms = Date.parse(normaliseIsoZ(value));
   if (Number.isNaN(ms)) return value;
   const d = new Date(ms);
@@ -117,7 +117,7 @@ export function displayTime(value: string): string {
 
 /** `2026-08-19` → `19 Aug 2026`. Accepts a full timestamp too. */
 export function displayDate(value: string): string {
-  if (!value) return "—";
+  if (!value) return "not recorded";
   const ms = Date.parse(normaliseIsoZ(value.length === 10 ? `${value}T00:00:00` : value));
   if (Number.isNaN(ms)) return value;
   const d = new Date(ms);
@@ -155,7 +155,7 @@ export function timeAgo(iso: string, now = Date.now()): string {
 
 /** `0x369c3ad9…b85c6b`. Digests are long and the head and tail are what matter. */
 export function shortenDigest(digest: string): string {
-  if (!digest) return "—";
+  if (!digest) return "not stored";
   const body = digest.startsWith("0x") ? digest.slice(2) : digest;
   if (body.length <= 20) return digest;
   return `${body.slice(0, 12)}…${body.slice(-6)}`;

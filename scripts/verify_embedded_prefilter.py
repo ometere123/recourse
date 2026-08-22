@@ -95,7 +95,7 @@ def main():
     )
     if result.skipped:
         print(
-            "FAIL: %d tests skipped — release verification requires every committed "
+            "FAIL: %d tests skipped. Release verification requires every committed "
             "authority fixture and the complete corpus tier." % len(result.skipped)
         )
     sys.exit(0 if result.wasSuccessful() and not result.skipped else 1)

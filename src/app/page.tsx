@@ -66,8 +66,8 @@ export default function HomePage() {
           A sanctions hit you can read, and argue with.
         </h1>
         <p className="m-0">
-          Screening services return a score and a colour. When the score is wrong — a shared
-          romanisation, a stale record, an address that was never yours — there is no one to ask and
+          Screening services return a score and a colour. The score can be wrong: a shared
+          romanisation, a stale record, an address that was never yours. There is no one to ask and
           nothing to appeal. Recourse writes a determination instead: the matched designation
           fields, the authority file consulted, whether a model was involved at all, and a window
           in which the determination can be contested by anybody willing to bond their claim.
@@ -129,7 +129,7 @@ export default function HomePage() {
         <dl className="m-0">
           <Answer term="Listed">
             The subject appears in the published file byte-for-byte. Arithmetic, not judgment, and
-            not appealable — there is nothing in it to overturn.
+            not appealable, because there is nothing in it to overturn.
           </Answer>
           <Answer term="Clear">
             Scoped, always:{" "}
@@ -169,8 +169,8 @@ export default function HomePage() {
                 </Link>{" "}
                 <span className="text-13">
                   {row.status === "PENDING"
-                    ? "— reported and bonded, never screened"
-                    : "— appeal window closed, record not finalised"}
+                    ? "· reported and bonded, never screened"
+                    : "· appeal window closed, record not finalised"}
                 </span>
               </li>
             ))}

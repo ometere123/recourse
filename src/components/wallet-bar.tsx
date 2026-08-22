@@ -48,7 +48,7 @@ export function WalletBar() {
             {shortenAddress(address)}
           </a>
         ) : (
-          "—"
+          "address unavailable"
         )}
         <span className="rc-label ml-3">{CHAIN_NAME}</span>
       </span>

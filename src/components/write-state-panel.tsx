@@ -237,7 +237,7 @@ export function Ruler({ stage }: { stage: TxStage }) {
         ))}
       </div>
       <p className="rc-label mt-2">
-        {retryable ? `${stage} — retryable` : stage}
+        {retryable ? `${stage} · retryable` : stage}
       </p>
     </div>
   );

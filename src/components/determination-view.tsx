@@ -193,7 +193,7 @@ function Disposition({
         <Body>
           <p className="m-0">
             Validators judged the subject to be the same party as the row below. The subject does
-            not appear byte-for-byte in the file, so this rests on a reading of the evidence — and
+            not appear byte-for-byte in the file, so this rests on a reading of the evidence, and
             a reading can be wrong.{" "}
             <span className="font-semibold">This determination is appealable.</span>
           </p>
@@ -280,10 +280,10 @@ function Record({ determination: d }: { determination: Determination }) {
         <Field term="Bond posted">
           <span className="rc-tabular">{formatGen(d.bond)} GEN</span>
           {d.status === "NOT_LISTED" ? (
-            <span className="text-13"> — slashed to the bounty pool</span>
+            <span className="text-13">, slashed to the bounty pool</span>
           ) : null}
           {d.status === "OVERTURNED" ? (
-            <span className="text-13"> — transferred to the appellant</span>
+            <span className="text-13">, transferred to the appellant</span>
           ) : null}
         </Field>
         <Field term="Basis">
@@ -321,7 +321,7 @@ function AppealRecord({ appeal }: { appeal: Appeal }) {
           <dl className="rc-flow-tight m-0">
             <Field term="Grounds">
               <span className="rc-verbatim">{appeal.grounds}</span>
-              <span className="text-13"> — {GROUNDS_GLOSS[appeal.grounds] ?? "the stated appeal basis"}</span>
+              <span className="text-13">, {GROUNDS_GLOSS[appeal.grounds] ?? "the stated appeal basis"}</span>
             </Field>
             <Field term="Appellant">
               <span className="rc-verbatim">{shortenAddress(appeal.appellant, 12, 10)}</span>
@@ -335,7 +335,7 @@ function AppealRecord({ appeal }: { appeal: Appeal }) {
                   {appeal.evidence_url}
                 </a>
               ) : (
-                "—"
+                "not provided"
               )}
             </Field>
             {appeal.evidence_digest ? (
@@ -394,7 +394,7 @@ export function statusHeadline(status: DeterminationStatus): string {
     case "NOT_LISTED":
       return "Not in the untruncated portion";
     case "INCONCLUSIVE":
-      return "Source truncated — unresolved";
+      return "Source truncated, unresolved";
     case "ASSERTED":
       return "Judged the same party";
     case "UNDER_APPEAL":

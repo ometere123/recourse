@@ -99,8 +99,8 @@ export default function DeterminationsPage() {
                   </Link>{" "}
                   <span className="text-13">
                     {row.status === "PENDING"
-                      ? "— reported, never screened"
-                      : "— appeal window closed, record not finalised"}
+                      ? "· reported, never screened"
+                      : "· appeal window closed, record not finalised"}
                   </span>
                 </li>
               ))}

@@ -352,7 +352,7 @@
     "$comment": "One genuine defect found in scripts/exercise-studionet.mjs while re-running the documented commands on 2026-08-22. It is in the verifier, not the contract; no contract change was needed and none was made. `verify:studionet` is not part of the `npm run verify` chain, which is why CI never surfaced it.",
     "defect": "The script read NEXT_PUBLIC_RECOURSE_CONTRACT straight from process.env with no .env.local loader, while its sibling scripts/verify-schema.mjs in the same directory already had one. The two commands documented in README.md therefore threw `NEXT_PUBLIC_RECOURSE_CONTRACT is not set` and exited 1 before opening a socket; they only worked in a shell that had exported the address by hand.",
     "fix": "Copied the sibling script's ten-line .env.local loader in verbatim rather than adding a dependency.",
-    "consequence": "Both documented commands — d1 NAME and d2 ADDRESS — now exit 0 exactly as written, with no environment variable exported. Intent Guard's scripts/exercise-studionet.mjs had the identical gap and was fixed the same way."
+    "consequence": "Both documented commands, d1 NAME and d2 ADDRESS, now exit 0 exactly as written, with no environment variable exported. Intent Guard's scripts/exercise-studionet.mjs had the identical gap and was fixed the same way."
   },
   "strandedValue": {
     "amountWei": "1000000000000000",
